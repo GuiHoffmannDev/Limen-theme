@@ -50,7 +50,7 @@
         "step": 5,
         "unit": "px",
         "label": "Logo width (mobile)",
-        "default": 92
+        "default": 90
       },
       {
         "type": "image_picker",
