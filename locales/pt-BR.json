@@ -21,7 +21,7 @@
     },
     "social": {
       "label": "Redes sociais",
-      "follow": "Siga a LIMEN no {{ name }}",
+      "follow": "Siga a LIMEM no {{ name }}",
       "instagram": "Instagram",
       "tiktok": "TikTok",
       "youtube": "YouTube",
@@ -74,7 +74,7 @@
     "placeholder": "seu@email.com",
     "button": "Inscrever-se",
     "success": "Obrigado — você está na lista.",
-    "consent": "Ao se inscrever, você concorda em receber notas ocasionais da LIMEN.",
+    "consent": "Ao se inscrever, você concorda em receber notas ocasionais da LIMEM.",
     "error": "Insira um endereço de e-mail válido."
   },
   "products": {

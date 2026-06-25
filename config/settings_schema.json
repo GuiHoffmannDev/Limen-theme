@@ -1,9 +1,9 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "LIMEN",
+    "theme_name": "LIMEM",
     "theme_version": "1.0.0",
-    "theme_author": "LIMEN",
+    "theme_author": "LIMEM",
     "theme_documentation_url": "https://github.com/",
     "theme_support_url": "https://github.com/"
   },
@@ -18,7 +18,7 @@
         "type": "image_picker",
         "id": "logo",
         "label": "Logo (primary)",
-        "info": "Logotipo principal da LIMEN. Recomendado SVG ou PNG transparente. Se vazio, usamos o símbolo + wordmark padrão."
+        "info": "Logotipo principal da LIMEM. Recomendado SVG ou PNG transparente. Se vazio, usamos o símbolo + wordmark padrão."
       },
       {
         "type": "image_picker",
@@ -30,7 +30,7 @@
         "type": "image_picker",
         "id": "logo_symbol",
         "label": "Symbol only",
-        "info": "Símbolo isolado da LIMEN (portal/limiar). Usado em favicon, divisores e transições."
+        "info": "Símbolo isolado da LIMEM (portal/limiar). Usado em favicon, divisores e transições."
       },
       {
         "type": "range",
@@ -71,7 +71,7 @@
         "type": "select",
         "id": "heading_font_family",
         "label": "Heading font",
-        "info": "Fonte serifada editorial dos títulos. Instrument Serif é o padrão da LIMEN; Source Serif 4 é a alternativa do moodboard.",
+        "info": "Fonte serifada editorial dos títulos. Instrument Serif é o padrão da LIMEM; Source Serif 4 é a alternativa do moodboard.",
         "options": [
           { "value": "instrument", "label": "Instrument Serif" },
           { "value": "source_serif", "label": "Source Serif 4" }
@@ -145,7 +145,7 @@
             "type": "color_background",
             "id": "background_gradient",
             "label": "Background gradient",
-            "info": "Optional. LIMEN favours flat mineral backgrounds — leave empty unless a campaign block needs it."
+            "info": "Optional. LIMEM favours flat mineral backgrounds — leave empty unless a campaign block needs it."
           },
           {
             "type": "color",
@@ -263,7 +263,7 @@
         "step": 1,
         "unit": "px",
         "label": "Global corner radius",
-        "info": "A LIMEN evita cantos muito arredondados. Mantenha discreto.",
+        "info": "A LIMEM evita cantos muito arredondados. Mantenha discreto.",
         "default": 2
       }
     ]

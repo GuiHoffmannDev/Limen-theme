@@ -131,7 +131,7 @@
     }
   },
   "presets": {
-    "LIMEN": {
+    "LIMEM": {
       "heading_font_family": "instrument",
       "body_font": "ibm_plex_sans_n4",
       "button_style": "solid",
