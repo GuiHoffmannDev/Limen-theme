@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "show_back": true,
+        "show_date": true,
+        "show_author": true,
+        "show_read_time": true,
+        "show_image": true,
+        "show_tags": true,
+        "show_share": true,
+        "show_related": true,
+        "related_count": 3
+      }
+    }
+  },
+  "order": ["main"]
+}

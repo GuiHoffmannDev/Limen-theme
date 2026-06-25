@@ -1,0 +1,60 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": { "type": "title", "settings": { "show_vendor": false } },
+        "price": { "type": "price", "settings": { "show_tax_note": true } },
+        "inventory": { "type": "inventory", "settings": { "low_inventory_threshold": 10 } },
+        "variant_picker": { "type": "variant_picker", "settings": { "update_url": true } },
+        "quantity": { "type": "quantity" },
+        "buy_buttons": { "type": "buy_buttons", "settings": { "show_dynamic_checkout": true } },
+        "sku": { "type": "sku" },
+        "description": { "type": "description" },
+        "trust": {
+          "type": "trust",
+          "settings": { "icon": "check", "text": "Secure checkout. Built to last, made to repair." }
+        },
+        "accordion_shipping": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Shipping & returns",
+            "content": "<p>Carbon-neutral delivery on every order. 30-day returns, no questions asked.</p>"
+          }
+        },
+        "accordion_specs": {
+          "type": "accordion",
+          "settings": {
+            "heading": "Details & care",
+            "content": "<p>Materials, dimensions and care notes. Edit this from the Theme Editor or link it to a page.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "inventory",
+        "variant_picker",
+        "quantity",
+        "buy_buttons",
+        "sku",
+        "description",
+        "trust",
+        "accordion_shipping",
+        "accordion_specs"
+      ],
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "gallery_position": "left",
+        "enable_zoom": true,
+        "sticky_info": true,
+        "show_share": false,
+        "show_related": true,
+        "related_heading": "You may also like",
+        "related_count": 4,
+        "related_color_scheme": "scheme-warm-white"
+      }
+    }
+  },
+  "order": ["main"]
+}

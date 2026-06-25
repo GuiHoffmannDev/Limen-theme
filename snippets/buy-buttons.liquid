@@ -1,0 +1,41 @@
+{%- comment -%}
+  Buy buttons — add to cart (+ optional dynamic checkout). Must be rendered
+  inside a {% form 'product' %}. product.js toggles the label / disabled state
+  on variant change and runs the AJAX add; the form still submits natively
+  without JS.
+
+  Accepts:
+    product              - (product) required
+    form                 - (form)    the product form object (for payment_button)
+    variant              - (variant)  the current variant
+    show_dynamic_checkout- (bool)    render the dynamic checkout button
+{%- endcomment -%}
+{%- liquid
+  assign cv = variant | default: product.selected_or_first_available_variant
+  assign can_add = false
+  if cv.available
+    assign can_add = true
+  endif
+-%}
+<div class="product-buy-buttons">
+  <button
+    type="submit"
+    name="add"
+    class="button button--solid button--large button--full product-buy-buttons__add"
+    data-add-to-cart
+    {% unless can_add %}disabled{% endunless %}
+    data-text-add="{{ 'products.product.add_to_cart' | t | escape }}"
+    data-text-sold-out="{{ 'products.product.sold_out' | t | escape }}"
+    data-text-unavailable="{{ 'products.product.unavailable' | t | escape }}"
+  >
+    <span data-add-text>
+      {%- if can_add -%}{{ 'products.product.add_to_cart' | t }}{%- elsif cv == nil -%}{{ 'products.product.unavailable' | t }}{%- else -%}{{ 'products.product.sold_out' | t }}{%- endif -%}
+    </span>
+  </button>
+
+  {%- if show_dynamic_checkout -%}
+    {{ form | payment_button }}
+  {%- endif -%}
+
+  <div class="product-buy-buttons__error" data-cart-error role="alert" hidden></div>
+</div>

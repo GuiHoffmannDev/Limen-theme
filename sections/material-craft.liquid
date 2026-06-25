@@ -1,0 +1,201 @@
+{%- comment -%}
+  Materials & craft — a modular, technical-feeling grid: materials, process
+  steps, diagrams, images and short numbered captions. Blocks:
+    · step — media (image or video) + numbered caption + title + technical note
+    · note — a standalone numbered technical note (no media)
+  Designed to read like the spec page of a well-made object.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="craft section color-{{ s.color_scheme }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width page-width--wide">
+    {%- if s.eyebrow != blank or s.heading != blank or s.intro != blank -%}
+      <div class="section-header craft__header" data-animate="{{ settings.animation_reveal_style }}">
+        {%- if s.eyebrow != blank -%}<p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="section-header__title">{{ s.heading | escape }}</h2>{%- endif -%}
+        {%- if s.intro != blank -%}<p class="section-header__intro">{{ s.intro | escape }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="craft__grid editorial-grid editorial-grid--{{ s.columns }}">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign num = block.settings.number
+            if num == blank
+              assign num = forloop.index | prepend: '0' | slice: -2, 2
+            endif
+          -%}
+          {%- case block.type -%}
+            {%- when 'step' -%}
+              <figure class="craft__step" data-animate="{{ settings.animation_reveal_style }}" style="--animate-delay: {{ forloop.index0 | times: 70 }}ms;" {{ block.shopify_attributes }}>
+                <div class="craft__media">
+                  {%- if block.settings.video != blank -%}
+                    {{ block.settings.video | video_tag: controls: true, image_size: '900x', class: 'craft__video' }}
+                  {%- elsif block.settings.image != blank -%}
+                    {%- render 'responsive-image', image: block.settings.image, sizes: '(min-width: 990px) 45vw, 90vw', widths: '400, 600, 800, 1000, 1300' -%}
+                  {%- else -%}
+                    <div class="placeholder-svg" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+                  {%- endif -%}
+                  <span class="craft__fig">{{ s.figure_prefix | escape }} {{ num }}</span>
+                </div>
+                <figcaption class="craft__caption">
+                  {%- if block.settings.label != blank -%}<span class="craft__label eyebrow">{{ block.settings.label | escape }}</span>{%- endif -%}
+                  {%- if block.settings.title != blank -%}<h3 class="craft__title">{{ block.settings.title | escape }}</h3>{%- endif -%}
+                  {%- if block.settings.note != blank -%}<p class="craft__note">{{ block.settings.note | escape }}</p>{%- endif -%}
+                </figcaption>
+              </figure>
+
+            {%- when 'note' -%}
+              <div class="craft__textcell" data-animate="{{ settings.animation_reveal_style }}" style="--animate-delay: {{ forloop.index0 | times: 70 }}ms;" {{ block.shopify_attributes }}>
+                <span class="craft__fig craft__fig--inline">{{ s.figure_prefix | escape }} {{ num }}</span>
+                {%- if block.settings.title != blank -%}<h3 class="craft__title">{{ block.settings.title | escape }}</h3>{%- endif -%}
+                {%- if block.settings.note != blank -%}<div class="craft__note rte">{{ block.settings.note }}</div>{%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .craft { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .craft__header { margin-bottom: var(--space-xl); }
+  .craft__grid { align-items: start; }
+
+  .craft__step { margin: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+  .craft__media { position: relative; overflow: hidden; border: var(--hairline); border-radius: var(--border-radius, 2px); aspect-ratio: 4 / 3; }
+  .craft__media img,
+  .craft__video,
+  .craft__media .placeholder-svg { width: 100%; height: 100%; object-fit: cover; }
+  .craft__fig {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgb(var(--color-background) / 0.9);
+    color: rgb(var(--color-foreground));
+    border: var(--hairline);
+    border-radius: 999px;
+  }
+  .craft__fig--inline { position: static; display: inline-block; color: rgb(var(--color-accent)); background: transparent; border: 0; padding: 0; }
+
+  .craft__caption { display: flex; flex-direction: column; gap: 0.35rem; }
+  .craft__label { color: rgb(var(--color-accent)); }
+  .craft__title { font-family: var(--font-display, "Instrument Serif", Georgia, serif); font-size: var(--text-lg); font-weight: 400; }
+  .craft__note { font-size: var(--text-sm); line-height: var(--leading-relaxed); color: rgb(var(--color-foreground) / 0.68); max-width: 46ch; }
+
+  .craft__textcell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--space-md);
+    border: var(--hairline);
+    border-radius: var(--border-radius, 2px);
+    background: rgb(var(--color-foreground) / 0.02);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Materials & craft",
+  "tag": "section",
+  "class": "craft-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Materials & craft"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Made of real things"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "text",
+      "id": "figure_prefix",
+      "label": "Figure caption prefix",
+      "default": "Fig."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step / material",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "info": "Leave blank to auto-number." },
+        { "type": "text", "id": "label", "label": "Label", "default": "Material" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Anodised aluminium" },
+        { "type": "textarea", "id": "note", "label": "Technical note", "default": "Machined from a single billet, bead-blasted and anodised for a warm, matte hand-feel." },
+        { "type": "image_picker", "id": "image", "label": "Image / diagram" },
+        { "type": "video", "id": "video", "label": "Video (optional)" }
+      ]
+    },
+    {
+      "type": "note",
+      "name": "Technical note",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "info": "Leave blank to auto-number." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Assembled to last" },
+        { "type": "richtext", "id": "note", "label": "Note", "default": "<p>Held together with screws, not glue — so it can be opened, repaired and kept in use.</p>" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Materials & craft",
+      "blocks": [
+        { "type": "step", "settings": { "label": "Material", "title": "Anodised aluminium", "note": "Machined from a single billet, bead-blasted and anodised for a warm, matte hand-feel." } },
+        { "type": "step", "settings": { "label": "Process", "title": "Hand-finished", "note": "Each edge is chamfered and checked by hand before assembly." } },
+        { "type": "note", "settings": { "title": "Assembled to last", "note": "<p>Held together with screws, not glue — so it can be opened, repaired and kept in use.</p>" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

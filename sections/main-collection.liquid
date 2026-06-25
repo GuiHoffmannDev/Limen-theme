@@ -1,0 +1,316 @@
+{%- comment -%}
+  Main collection — editorial banner + native filtering / sorting / pagination
+  built on real Shopify data (collection.filters, collection.sort_options,
+  {% paginate %}). facets.js enhances filtering with the Section Rendering API
+  (no reload) and a mobile filter drawer; without JS the filter form and sort
+  submit as normal GET navigations. Grid reuses the product-card snippet.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign show_filtering = s.enable_filtering
+  assign show_sorting = s.enable_sorting
+
+  assign active_count = 0
+  for filter in collection.filters
+    assign active_count = active_count | plus: filter.active_values.size
+    if filter.type == 'price_range'
+      if filter.min_value.value != nil or filter.max_value.value != nil
+        assign active_count = active_count | plus: 1
+      endif
+    endif
+  endfor
+
+  if s.columns == '3'
+    assign grid_sizes = '(min-width: 990px) 30vw, (min-width: 750px) 33vw, 50vw'
+  else
+    assign grid_sizes = '(min-width: 990px) 22vw, (min-width: 750px) 33vw, 50vw'
+  endif
+  assign anchor = '#MainCollection-' | append: section.id
+-%}
+
+<section
+  id="MainCollection-{{ section.id }}"
+  class="collection-section section color-{{ s.color_scheme }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width page-width--wide">
+    {%- render 'breadcrumbs' -%}
+
+    {%- if s.show_banner -%}
+      <header class="collection-banner{% if collection.image and s.show_banner_image %} collection-banner--media{% endif %}" data-animate="fade-up">
+        {%- if collection.image and s.show_banner_image -%}
+          <div class="collection-banner__media">
+            {%- render 'responsive-image', image: collection.image, sizes: '100vw', widths: '600, 900, 1200, 1600, 2000', loading: 'eager', fetchpriority: 'high', crop: 'center' -%}
+          </div>
+        {%- endif -%}
+        <div class="collection-banner__text">
+          <h1 class="collection-banner__title">{{ collection.title }}</h1>
+          {%- if collection.description != blank and s.show_description -%}
+            <div class="collection-banner__description rte">{{ collection.description }}</div>
+          {%- endif -%}
+        </div>
+      </header>
+    {%- endif -%}
+
+    {%- paginate collection.products by s.products_per_page -%}
+      <div class="collection" data-facet-results data-section-id="{{ section.id }}">
+        <div class="collection__toolbar">
+          <p class="collection__count" data-facet-count aria-live="polite">
+            {%- if collection.all_products_count == collection.products_count -%}
+              {{ 'products.facets.product_count_simple' | t: count: collection.products_count }}
+            {%- else -%}
+              {{ 'products.facets.product_count' | t: count: collection.products_count, total: collection.all_products_count }}
+            {%- endif -%}
+          </p>
+
+          <div class="collection__controls">
+            {%- if show_filtering and collection.filters.size > 0 -%}
+              <button type="button" class="button button--outline button--small collection__filter-toggle" aria-controls="FilterDrawer">
+                {%- render 'icon', name: 'menu', class: 'icon--sm' -%}
+                {{ 'products.facets.filter_button' | t }}
+                {%- if active_count > 0 -%}<span class="collection__filter-count">{{ active_count }}</span>{%- endif -%}
+              </button>
+            {%- endif -%}
+
+            {%- if show_sorting and collection.sort_options.size > 0 -%}
+              <form method="get" action="{{ collection.url }}" class="collection__sort field">
+                {%- for filter in collection.filters -%}
+                  {%- for value in filter.active_values -%}
+                    <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
+                  {%- endfor -%}
+                  {%- if filter.type == 'price_range' -%}
+                    {%- if filter.min_value.value != nil -%}<input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}">{%- endif -%}
+                    {%- if filter.max_value.value != nil -%}<input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}">{%- endif -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                <label class="visually-hidden" for="SortBy-{{ section.id }}">{{ 'products.facets.sort_by_label' | t }}</label>
+                <div class="select">
+                  <select id="SortBy-{{ section.id }}" name="sort_by" data-facet-sort>
+                    {%- for option in collection.sort_options -%}
+                      <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+                <noscript><button type="submit" class="button button--small">{{ 'products.facets.apply' | t }}</button></noscript>
+              </form>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="collection__layout">
+          {%- if show_filtering and collection.filters.size > 0 -%}
+            <aside class="collection__aside" aria-label="{{ 'products.facets.filter_by_label' | t }}">
+              {%- render 'facets', results: collection, action_url: collection.url, section: section.id, context: 'inline' -%}
+            </aside>
+          {%- endif -%}
+
+          <div class="collection__results" data-product-grid tabindex="-1">
+            {%- if collection.products.size > 0 -%}
+              <div class="editorial-grid editorial-grid--{{ s.columns }} collection__grid">
+                {%- for product in collection.products -%}
+                  {%- render 'product-card',
+                    product: product,
+                    image_ratio: s.image_ratio,
+                    show_quick_add: s.show_quick_add,
+                    sizes: grid_sizes,
+                    index: forloop.index
+                  -%}
+                {%- endfor -%}
+              </div>
+              {%- render 'pagination', paginate: paginate, anchor: anchor -%}
+            {%- else -%}
+              <div class="empty-state collection__empty">
+                {%- if active_count > 0 -%}
+                  <p class="empty-state__title">{{ 'collection.empty_filtered' | t }}</p>
+                  <a href="{{ collection.url }}" class="button button--outline" data-facet-clear-all>{{ 'products.facets.clear_all' | t }}</a>
+                {%- else -%}
+                  <p class="empty-state__title">{{ 'collection.empty' | t }}</p>
+                  <a href="{{ routes.all_products_collection_url }}" class="button button--outline">{{ 'collection.view_all' | t }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </div>
+
+        {%- if show_filtering and collection.filters.size > 0 -%}
+          <limen-drawer id="FilterDrawer" class="filter-drawer color-{{ s.color_scheme }}">
+            <div class="drawer__overlay" data-drawer-overlay></div>
+            <div class="drawer__panel drawer__panel--left filter-drawer__panel" data-drawer-panel role="dialog" aria-modal="true" aria-label="{{ 'products.facets.filter_and_sort' | t }}">
+              <div class="drawer__header">
+                <span class="drawer__title">{{ 'products.facets.filter_by_label' | t }}</span>
+                <button type="button" class="drawer__close" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">
+                  {%- render 'icon', name: 'close' -%}
+                </button>
+              </div>
+              <div class="drawer__body">
+                {%- render 'facets', results: collection, action_url: collection.url, section: section.id, context: 'drawer' -%}
+              </div>
+            </div>
+          </limen-drawer>
+        {%- endif -%}
+      </div>
+    {%- endpaginate -%}
+  </div>
+</section>
+
+<script src="{{ 'facets.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .collection-section { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+
+  .collection-banner { margin-bottom: var(--space-xl); }
+  .collection-banner__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); }
+  .collection-banner__description { margin-top: var(--space-sm); max-width: var(--measure-narrow); color: rgb(var(--color-foreground) / 0.72); }
+  .collection-banner--media .collection-banner__media {
+    position: relative;
+    aspect-ratio: 16 / 6;
+    overflow: hidden;
+    border-radius: var(--border-radius, 2px);
+    margin-bottom: var(--space-lg);
+  }
+  .collection-banner--media .collection-banner__media img { width: 100%; height: 100%; object-fit: cover; }
+
+  .collection__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--hairline);
+    margin-bottom: var(--space-lg);
+  }
+  .collection__count { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.65); }
+  .collection__controls { display: flex; align-items: center; gap: 0.75rem; }
+  .collection__filter-count {
+    display: inline-grid;
+    place-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    margin-left: 0.2rem;
+    padding: 0 0.3rem;
+    font-size: 0.6875rem;
+    color: rgb(var(--color-background));
+    background: rgb(var(--color-foreground));
+    border-radius: 999px;
+  }
+  .collection__sort { display: flex; align-items: center; gap: 0.5rem; }
+
+  .collection__layout { display: grid; gap: clamp(1.5rem, 1rem + 2vw, 3rem); align-items: start; }
+  @media (min-width: 990px) {
+    .collection__layout { grid-template-columns: 16rem 1fr; }
+  }
+  .collection__aside { display: none; }
+  @media (min-width: 990px) {
+    .collection__aside { display: block; position: sticky; top: 6rem; }
+    .collection__filter-toggle { display: none; }
+  }
+  .collection__results.is-loading { opacity: 0.5; transition: opacity var(--duration-fast) ease; }
+  .collection.is-loading { cursor: progress; }
+  .collection__empty { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+
+  .filter-drawer__panel { width: min(92vw, 24rem); }
+  @media (min-width: 990px) { #FilterDrawer { display: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Collection",
+  "tag": "section",
+  "class": "main-collection-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "header",
+      "content": "Banner"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner",
+      "label": "Show collection banner",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_banner_image",
+      "label": "Show collection image",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product grid"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "natural", "label": "Natural" },
+        { "value": "square", "label": "Square (1:1)" },
+        { "value": "portrait", "label": "Portrait (4:5)" },
+        { "value": "landscape", "label": "Landscape (4:3)" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "Show quick add",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Filtering & sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filters",
+      "info": "Configure filters in Search & Discovery in the Shopify admin.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable sorting",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection"
+    }
+  ]
+}
+{% endschema %}

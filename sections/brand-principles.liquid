@@ -1,0 +1,167 @@
+{%- comment -%}
+  Brand principles — numbered editorial directory of what LIMEN believes.
+  Each principle is a reorderable block (number, title, description, optional
+  illustration). Two layouts: numbered list with hairlines, or a grid.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="principles section color-{{ s.color_scheme }}">
+  <div class="page-width">
+    {%- if s.eyebrow != blank or s.heading != blank or s.intro != blank -%}
+      <div class="section-header principles__header" data-animate="{{ settings.animation_reveal_style }}">
+        {%- if s.eyebrow != blank -%}<p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="section-header__title">{{ s.heading | escape }}</h2>{%- endif -%}
+        {%- if s.intro != blank -%}<p class="section-header__intro">{{ s.intro | escape }}</p>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {%- if s.layout == 'grid' -%}
+        <ol class="principles__grid editorial-grid editorial-grid--3">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign num = block.settings.number
+              if num == blank
+                assign num = forloop.index | prepend: '0' | slice: -2, 2
+              endif
+            -%}
+            <li class="principles__card" data-animate="{{ settings.animation_reveal_style }}" style="--animate-delay: {{ forloop.index0 | times: 70 }}ms;" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                <div class="principles__card-media">
+                  {%- render 'responsive-image', image: block.settings.image, sizes: '(min-width: 990px) 30vw, 90vw', widths: '300, 500, 700, 900' -%}
+                </div>
+              {%- endif -%}
+              <span class="principles__num">{{ num }}</span>
+              <h3 class="principles__title">{{ block.settings.title | escape }}</h3>
+              {%- if block.settings.body != blank -%}<p class="principles__desc">{{ block.settings.body | escape }}</p>{%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ol>
+      {%- else -%}
+        <ol class="principles__list index-list">
+          {%- for block in section.blocks -%}
+            {%- liquid
+              assign num = block.settings.number
+              if num == blank
+                assign num = forloop.index | prepend: '0' | slice: -2, 2
+              endif
+            -%}
+            <li class="principles__row index-list__row" data-animate="{{ settings.animation_reveal_style }}" style="--animate-delay: {{ forloop.index0 | times: 60 }}ms;" {{ block.shopify_attributes }}>
+              <span class="principles__num">{{ num }}</span>
+              <div class="principles__row-body">
+                <h3 class="principles__title index-list__row-title">{{ block.settings.title | escape }}</h3>
+                {%- if block.settings.body != blank -%}<p class="principles__desc">{{ block.settings.body | escape }}</p>{%- endif -%}
+              </div>
+              {%- if block.settings.image != blank -%}
+                <span class="principles__row-media">
+                  {%- render 'responsive-image', image: block.settings.image, sizes: '120px', widths: '120, 240, 360' -%}
+                </span>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ol>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .principles { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .principles__header { margin-bottom: var(--space-xl); }
+  .principles__num {
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    color: rgb(var(--color-accent));
+    letter-spacing: 0.04em;
+  }
+
+  /* List layout */
+  .principles__row { align-items: start; gap: clamp(1rem, 0.5rem + 3vw, 4rem); }
+  .principles__row .principles__num { padding-top: 0.55rem; flex: none; }
+  .principles__row-body { flex: 1 1 auto; display: flex; flex-direction: column; gap: 0.4rem; }
+  .principles__desc { color: rgb(var(--color-foreground) / 0.66); font-size: var(--text-md); max-width: 52ch; }
+  .principles__row .principles__title { font-family: var(--font-display, "Instrument Serif", Georgia, serif); font-size: var(--text-xl); font-weight: 400; }
+  .principles__row-media { flex: none; width: 4.5rem; }
+  .principles__row-media img { border-radius: var(--border-radius, 2px); }
+
+  /* Grid layout */
+  .principles__card { display: flex; flex-direction: column; gap: 0.55rem; padding-top: var(--space-sm); border-top: var(--hairline); }
+  .principles__card-media { margin-bottom: var(--space-xs); border-radius: var(--border-radius, 2px); overflow: hidden; aspect-ratio: 4 / 3; }
+  .principles__card-media img { width: 100%; height: 100%; object-fit: cover; }
+  .principles__card .principles__title { font-family: var(--font-display, "Instrument Serif", Georgia, serif); font-size: var(--text-lg); font-weight: 400; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Brand principles",
+  "tag": "section",
+  "class": "principles-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "list", "label": "Numbered list" },
+        { "value": "grid", "label": "Grid" }
+      ],
+      "default": "list"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Principles"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How we make things"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "principle",
+      "name": "Principle",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "info": "Leave blank to auto-number." },
+        { "type": "text", "id": "title", "label": "Title", "default": "Human by design" },
+        { "type": "text", "id": "body", "label": "Description", "default": "Shaped around people first — the technology follows." },
+        { "type": "image_picker", "id": "image", "label": "Illustration (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Brand principles",
+      "blocks": [
+        { "type": "principle", "settings": { "title": "Human by design", "body": "Shaped around people first — the technology follows." } },
+        { "type": "principle", "settings": { "title": "Less interface, more interaction", "body": "Fewer screens and menus. More direct, tactile contact." } },
+        { "type": "principle", "settings": { "title": "Built for touch", "body": "Materials and forms made to be held, not just used." } },
+        { "type": "principle", "settings": { "title": "Calm technology", "body": "Present when needed, quiet the rest of the time." } },
+        { "type": "principle", "settings": { "title": "Made to remain useful", "body": "Objects that earn their place and keep it for years." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

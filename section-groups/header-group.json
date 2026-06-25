@@ -1,0 +1,42 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-1": {
+          "type": "announcement",
+          "settings": {
+            "text": "Free shipping over $150"
+          }
+        },
+        "announcement-2": {
+          "type": "announcement",
+          "settings": {
+            "text": "Crafted in small batches"
+          }
+        }
+      },
+      "block_order": ["announcement-1", "announcement-2"],
+      "settings": {
+        "color_scheme": "scheme-dark"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "logo_position": "left",
+        "color_scheme": "scheme-dark",
+        "sticky": true,
+        "transparent_on_index": true,
+        "show_search": true,
+        "show_account": true,
+        "show_country_selector": false,
+        "show_language_selector": false
+      }
+    }
+  },
+  "order": ["announcement-bar", "header"]
+}

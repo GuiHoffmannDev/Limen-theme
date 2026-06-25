@@ -1,0 +1,142 @@
+{%- comment -%}
+  Manifesto editorial — a magazine spread. Large serif statement with italic
+  emphasis on the left, a quiet sans aside note on the right. Lots of breathing
+  room. Uses the shared .editorial-columns / .aside-note scaffolding.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="manifesto section{% if s.tight_spacing %}--tight{% endif %} color-{{ s.color_scheme }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width">
+    <div class="editorial-columns{% if s.layout == 'reverse' %} editorial-columns--reverse{% endif %} manifesto__grid">
+      <div class="manifesto__main" data-animate="{{ settings.animation_reveal_style }}">
+        {%- if s.eyebrow != blank -%}
+          <p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>
+        {%- endif -%}
+        {%- if s.heading != blank -%}
+          <h2 class="manifesto__statement statement statement--full">
+            {{ s.heading | escape }}{% if s.heading_emphasis != blank %} <em>{{ s.heading_emphasis | escape }}</em>{% endif %}
+          </h2>
+        {%- endif -%}
+        {%- if s.body != blank -%}
+          <div class="manifesto__body">{{ s.body }}</div>
+        {%- endif -%}
+      </div>
+
+      {%- if s.aside_heading != blank or s.aside_note != blank -%}
+        <aside class="manifesto__aside aside-note" data-animate="fade-up" style="--animate-delay: 120ms;">
+          {%- if s.aside_heading != blank -%}<p class="manifesto__aside-heading eyebrow">{{ s.aside_heading | escape }}</p>{%- endif -%}
+          {%- if s.aside_note != blank -%}<div class="manifesto__aside-note rte">{{ s.aside_note }}</div>{%- endif -%}
+        </aside>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .manifesto { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .manifesto__main { display: flex; flex-direction: column; gap: var(--space-md); }
+  .manifesto__statement { max-width: 22ch; }
+  .manifesto__body {
+    max-width: 38ch;
+    font-family: var(--font-display, "Instrument Serif", Georgia, serif);
+    font-size: var(--text-xl);
+    line-height: var(--leading-snug);
+    color: rgb(var(--color-foreground) / 0.88);
+  }
+  .manifesto__body > * + * { margin-top: 0.6em; }
+  .manifesto__body em { color: rgb(var(--color-accent)); }
+  .manifesto__aside { align-self: end; max-width: 30ch; display: flex; flex-direction: column; gap: var(--space-xs); }
+  .manifesto__aside-heading { color: rgb(var(--color-foreground) / 0.55); border: 0; padding: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Manifesto editorial",
+  "tag": "section",
+  "class": "manifesto-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-warm-white"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Aside position",
+      "options": [
+        { "value": "default", "label": "Right" },
+        { "value": "reverse", "label": "Left" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "checkbox",
+      "id": "tight_spacing",
+      "label": "Tighter vertical spacing",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Statement"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Manifesto"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Statement",
+      "default": "Technology should feel"
+    },
+    {
+      "type": "text",
+      "id": "heading_emphasis",
+      "label": "Statement emphasis (italic accent)",
+      "default": "natural."
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "Body",
+      "default": "<p>LIMEN makes objects shaped around how people actually live, work and create. Less distraction. More intention. Less interface. More interaction.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Aside note"
+    },
+    {
+      "type": "text",
+      "id": "aside_heading",
+      "label": "Aside heading",
+      "default": "On the name"
+    },
+    {
+      "type": "richtext",
+      "id": "aside_note",
+      "label": "Aside note",
+      "default": "<p>Limen — Latin for threshold: the line between two states. The moment idea meets object, and a tool becomes part of how you think.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Manifesto editorial",
+      "settings": {
+        "color_scheme": "scheme-warm-white"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-cart",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "show_recommendations": false,
+        "recommendation_heading": "Objects that earn their place",
+        "recommendation_count": 4
+      }
+    }
+  },
+  "order": ["main"]
+}

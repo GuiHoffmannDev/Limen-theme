@@ -1,0 +1,73 @@
+{%- comment -%}
+  Theme block: Button. A single reorderable call-to-action. Style maps to the
+  shared .button / .link-arrow components. Link is a real Shopify URL setting.
+{%- endcomment -%}
+{%- liquid
+  assign b = block.settings
+  assign url = b.link | default: routes.root_url
+-%}
+<div class="block-button block-button--{{ b.alignment }}" {{ block.shopify_attributes }}>
+  {%- if b.label != blank -%}
+    {%- case b.style -%}
+      {%- when 'arrow' -%}
+        <a href="{{ url }}" class="link-arrow link-arrow--underlined">{{ b.label | escape }}</a>
+      {%- when 'outline' -%}
+        <a href="{{ url }}" class="button button--outline{% if b.size == 'large' %} button--large{% endif %}">{{ b.label | escape }}</a>
+      {%- else -%}
+        <a href="{{ url }}" class="button button--solid{% if b.size == 'large' %} button--large{% endif %}">{{ b.label | escape }}</a>
+    {%- endcase -%}
+  {%- elsif request.design_mode -%}
+    <p class="block-button__empty">{{ 'onboarding.button_prompt' | t }}</p>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .block-button { display: flex; }
+  .block-button--start { justify-content: flex-start; }
+  .block-button--center { justify-content: center; }
+  .block-button--end { justify-content: flex-end; }
+  .block-button__empty { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.5); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Button",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Label", "default": "Explore products" },
+    { "type": "url", "id": "link", "label": "Link" },
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Style",
+      "options": [
+        { "value": "solid", "label": "Solid" },
+        { "value": "outline", "label": "Outline" },
+        { "value": "arrow", "label": "Editorial arrow" }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Size",
+      "options": [
+        { "value": "regular", "label": "Regular" },
+        { "value": "large", "label": "Large" }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "default": "start"
+    }
+  ],
+  "presets": [{ "name": "Button" }]
+}
+{% endschema %}

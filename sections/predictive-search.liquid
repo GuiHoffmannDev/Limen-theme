@@ -1,0 +1,263 @@
+{%- comment -%}
+  Search — a top sheet opened from the header search button via <limen-drawer>.
+  The native form always works (submits to /search). When predictive search is
+  enabled, predictive-search.js fetches this same section with ?q=&section_id=
+  and swaps the [data-predictive-results] region with live, accessible results.
+{%- endcomment -%}
+<limen-drawer id="SearchDrawer" class="search-drawer color-{{ section.settings.color_scheme }}">
+  <div class="drawer__overlay" data-drawer-overlay></div>
+  <div
+    class="drawer__panel drawer__panel--top search-drawer__panel"
+    data-drawer-panel
+    role="dialog"
+    aria-modal="true"
+    aria-label="{{ 'search.title' | t }}"
+  >
+    <div class="page-width page-width--wide search-drawer__inner">
+      <predictive-search data-section-id="{{ section.id }}" class="search-drawer__widget">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search-drawer__form">
+          <input type="hidden" name="type" value="product,article,page">
+          <span class="search-drawer__icon">{%- render 'icon', name: 'search' -%}</span>
+          <label class="visually-hidden" for="SearchDrawerInput">{{ 'search.title' | t }}</label>
+          <input
+            type="search"
+            id="SearchDrawerInput"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'search.placeholder' | t }}"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            autofocus
+          >
+          <button type="reset" class="search-drawer__clear" data-predictive-reset aria-label="{{ 'search.reset' | t }}">
+            {%- render 'icon', name: 'close', class: 'icon--sm' -%}
+          </button>
+          <button type="submit" class="button button--solid button--small search-drawer__submit">{{ 'search.submit' | t }}</button>
+          <button type="button" class="drawer__close search-drawer__close" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">
+            {%- render 'icon', name: 'close' -%}
+          </button>
+        </form>
+
+        {%- render 'loading-spinner', class: 'search-drawer__spinner' -%}
+
+        <div class="search-drawer__results" data-predictive-results>
+          {%- if predictive_search.performed -%}
+            {%- liquid
+              assign products = predictive_search.resources.products
+              assign articles = predictive_search.resources.articles
+              assign pages = predictive_search.resources.pages
+              assign queries = predictive_search.resources.queries
+              assign show_products = false
+              assign show_articles = false
+              assign show_pages = false
+              if settings.predictive_search_products and products.size > 0
+                assign show_products = true
+              endif
+              if settings.predictive_search_articles and articles.size > 0
+                assign show_articles = true
+              endif
+              if settings.predictive_search_pages and pages.size > 0
+                assign show_pages = true
+              endif
+            -%}
+
+            {%- if show_products == false and show_articles == false and show_pages == false and queries.size == 0 -%}
+              <p class="search-drawer__empty">{{ 'search.no_results' | t: terms: predictive_search.terms }}</p>
+            {%- else -%}
+              <div class="search-drawer__groups">
+                {%- if queries.size > 0 -%}
+                  <div class="search-drawer__group search-drawer__group--queries">
+                    <h2 class="search-drawer__group-title eyebrow">{{ 'search.predictive.queries' | t }}</h2>
+                    <ul role="list">
+                      {%- for query in queries -%}
+                        <li id="predictive-query-{{ forloop.index }}" role="option">
+                          <a href="{{ query.url }}" class="search-drawer__query">
+                            {%- render 'icon', name: 'search', class: 'icon--sm' -%}
+                            {{ query.styled_text }}
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+
+                {%- if show_products -%}
+                  <div class="search-drawer__group search-drawer__group--products">
+                    <h2 class="search-drawer__group-title eyebrow">{{ 'search.predictive.products' | t }}</h2>
+                    <ul class="search-drawer__product-list" role="list">
+                      {%- for product in products -%}
+                        <li id="predictive-product-{{ forloop.index }}" role="option" class="search-result">
+                          <a href="{{ product.url }}" class="search-result__link">
+                            <span class="search-result__media">
+                              {%- if product.featured_media -%}
+                                {%- render 'responsive-image', image: product.featured_media.preview_image, sizes: '64px', widths: '64, 96, 128', loading: 'lazy' -%}
+                              {%- endif -%}
+                            </span>
+                            <span class="search-result__info">
+                              <span class="search-result__title">{{ product.title }}</span>
+                              <span class="search-result__price">
+                                {%- if product.price_varies -%}
+                                  {%- assign price_money = product.price | money -%}
+                                  {{ 'products.product.from_price' | t: price: price_money }}
+                                {%- else -%}
+                                  {{ product.price | money }}
+                                {%- endif -%}
+                              </span>
+                            </span>
+                          </a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+
+                {%- if show_articles -%}
+                  <div class="search-drawer__group search-drawer__group--articles">
+                    <h2 class="search-drawer__group-title eyebrow">{{ 'search.predictive.articles' | t }}</h2>
+                    <ul role="list">
+                      {%- for article in articles -%}
+                        <li id="predictive-article-{{ forloop.index }}" role="option">
+                          <a href="{{ article.url }}" class="search-drawer__link-row">{{ article.title }}</a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+
+                {%- if show_pages -%}
+                  <div class="search-drawer__group search-drawer__group--pages">
+                    <h2 class="search-drawer__group-title eyebrow">{{ 'search.predictive.pages' | t }}</h2>
+                    <ul role="list">
+                      {%- for page in pages -%}
+                        <li id="predictive-page-{{ forloop.index }}" role="option">
+                          <a href="{{ page.url }}" class="search-drawer__link-row">{{ page.title }}</a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                {%- endif -%}
+              </div>
+
+              <a href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&type=product,article,page" class="search-drawer__view-all link-arrow">
+                {{ 'search.predictive.view_all' | t: terms: predictive_search.terms }}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </predictive-search>
+    </div>
+  </div>
+</limen-drawer>
+
+{%- if settings.predictive_search_enabled -%}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .search-drawer__panel { background: rgb(var(--color-background)); }
+  .search-drawer__inner { padding-block: var(--space-lg); }
+  .search-drawer__widget { display: block; }
+
+  .search-drawer__form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1.5px solid rgb(var(--color-foreground));
+  }
+  .search-drawer__icon { color: rgb(var(--color-foreground) / 0.5); display: inline-flex; }
+  .search-drawer__form input[type="search"] {
+    flex: 1 1 auto;
+    min-height: 2.5rem;
+    padding: 0.4rem 0;
+    font-family: var(--font-display, "Instrument Serif", Georgia, serif);
+    font-size: var(--text-2xl);
+    border: none;
+    background: transparent;
+  }
+  .search-drawer__form input[type="search"]:focus { box-shadow: none; outline: none; }
+  .search-drawer__form input::-webkit-search-cancel-button { display: none; }
+  .search-drawer__clear {
+    display: grid;
+    place-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: rgb(var(--color-foreground) / 0.6);
+    border-radius: 50%;
+  }
+  .search-drawer__clear:hover { background: rgb(var(--color-foreground) / 0.06); color: rgb(var(--color-foreground)); }
+  .search-drawer__submit { flex: none; }
+  .search-drawer__close { flex: none; margin: 0; }
+
+  .search-drawer__results { margin-top: var(--space-lg); }
+  .search-drawer__empty { font-size: var(--text-md); color: rgb(var(--color-foreground) / 0.7); }
+  .search-drawer__groups {
+    display: grid;
+    gap: var(--space-lg);
+  }
+  @media (min-width: 750px) {
+    .search-drawer__groups { grid-template-columns: 1.4fr 1fr; align-items: start; }
+    .search-drawer__group--products { grid-row: span 3; }
+  }
+  .search-drawer__group-title { color: rgb(var(--color-foreground) / 0.55); margin-bottom: var(--space-sm); }
+  .search-drawer__group ul { display: flex; flex-direction: column; gap: 0.15rem; }
+
+  .search-drawer__query,
+  .search-drawer__link-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    margin-inline: -0.6rem;
+    border-radius: var(--border-radius, 2px);
+    font-size: var(--text-md);
+  }
+  [role="option"][aria-selected="true"] > a,
+  .search-drawer__query:hover,
+  .search-drawer__link-row:hover { background: rgb(var(--color-foreground) / 0.06); }
+
+  .search-drawer__product-list { gap: 0.25rem; }
+  .search-result__link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0.5rem 0.6rem;
+    margin-inline: -0.6rem;
+    border-radius: var(--border-radius, 2px);
+  }
+  .search-result__media {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    background: rgb(var(--color-foreground) / 0.04);
+    border-radius: var(--border-radius, 2px);
+  }
+  .search-result__media img { width: 100%; height: 100%; object-fit: cover; }
+  .search-result__info { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+  .search-result__title { font-size: var(--text-md); font-weight: 500; line-height: 1.2; }
+  .search-result__price { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.62); font-variant-numeric: tabular-nums; }
+
+  .search-drawer__view-all { margin-top: var(--space-lg); }
+
+  predictive-search.is-loading .search-drawer__results { opacity: 0.55; transition: opacity var(--duration-fast) ease; }
+
+  /* Spinner shows only while predictive-search.js is fetching results. */
+  .search-drawer__widget .search-drawer__spinner { display: none; margin-top: var(--space-md); }
+  predictive-search.is-loading .search-drawer__spinner { display: inline-block; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Predictive search",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    }
+  ]
+}
+{% endschema %}

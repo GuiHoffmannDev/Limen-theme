@@ -1,0 +1,142 @@
+{
+  "current": {
+    "heading_font_family": "instrument",
+    "heading_scale": 100,
+    "heading_italic_emphasis": true,
+    "body_font": "ibm_plex_sans_n4",
+    "body_scale": 100,
+    "letter_spacing_label": 8,
+    "border_opacity": 16,
+    "page_width": 1480,
+    "section_spacing": 0,
+    "page_margin": 48,
+    "border_radius": 2,
+    "button_style": "solid",
+    "button_radius": 2,
+    "button_uppercase": false,
+    "animations_enabled": true,
+    "animation_reveal_style": "fade-up",
+    "hover_image_swap": true,
+    "cart_type": "drawer",
+    "cart_show_note": true,
+    "cart_show_free_shipping": false,
+    "cart_free_shipping_threshold": 200,
+    "predictive_search_enabled": true,
+    "predictive_search_products": true,
+    "predictive_search_articles": true,
+    "predictive_search_pages": true,
+    "card_image_ratio": "portrait",
+    "show_vendor": false,
+    "show_badges": true,
+    "show_quick_add": true,
+    "show_breadcrumbs": true,
+    "show_focus_outline": false,
+    "color_schemes": {
+      "scheme-ivory": {
+        "settings": {
+          "background": "#FAF9F5",
+          "text": "#141413",
+          "accent": "#D97855",
+          "highlight": "#A6AE95",
+          "button": "#141413",
+          "button_label": "#FAF9F5",
+          "secondary_button_label": "#141413",
+          "border": "#141413"
+        }
+      },
+      "scheme-warm-white": {
+        "settings": {
+          "background": "#F4EFE5",
+          "text": "#141413",
+          "accent": "#D97855",
+          "highlight": "#A6AE95",
+          "button": "#141413",
+          "button_label": "#F4EFE5",
+          "secondary_button_label": "#141413",
+          "border": "#141413"
+        }
+      },
+      "scheme-terracotta": {
+        "settings": {
+          "background": "#D97855",
+          "text": "#2A2722",
+          "accent": "#2A2722",
+          "highlight": "#F4EFE5",
+          "button": "#2A2722",
+          "button_label": "#F4EFE5",
+          "secondary_button_label": "#2A2722",
+          "border": "#2A2722"
+        }
+      },
+      "scheme-sage": {
+        "settings": {
+          "background": "#A6AE95",
+          "text": "#2A2722",
+          "accent": "#D97855",
+          "highlight": "#F4EFE5",
+          "button": "#2A2722",
+          "button_label": "#F4EFE5",
+          "secondary_button_label": "#2A2722",
+          "border": "#2A2722"
+        }
+      },
+      "scheme-lilac": {
+        "settings": {
+          "background": "#C9C7D6",
+          "text": "#2A2722",
+          "accent": "#D97855",
+          "highlight": "#FAF8F2",
+          "button": "#2A2722",
+          "button_label": "#FAF8F2",
+          "secondary_button_label": "#2A2722",
+          "border": "#2A2722"
+        }
+      },
+      "scheme-warm-beige": {
+        "settings": {
+          "background": "#F2E3D9",
+          "text": "#2A2722",
+          "accent": "#D97855",
+          "highlight": "#A6AE95",
+          "button": "#2A2722",
+          "button_label": "#FAF8F2",
+          "secondary_button_label": "#2A2722",
+          "border": "#2A2722"
+        }
+      },
+      "scheme-dark": {
+        "settings": {
+          "background": "#141413",
+          "text": "#FAF9F5",
+          "accent": "#D97855",
+          "highlight": "#DED2BF",
+          "button": "#FAF9F5",
+          "button_label": "#141413",
+          "secondary_button_label": "#FAF9F5",
+          "border": "#FAF9F5"
+        }
+      },
+      "scheme-pure-white": {
+        "settings": {
+          "background": "#FFFFFF",
+          "text": "#000000",
+          "accent": "#D97855",
+          "highlight": "#A6AE95",
+          "button": "#000000",
+          "button_label": "#FFFFFF",
+          "secondary_button_label": "#000000",
+          "border": "#000000"
+        }
+      }
+    }
+  },
+  "presets": {
+    "LIMEN": {
+      "heading_font_family": "instrument",
+      "body_font": "ibm_plex_sans_n4",
+      "button_style": "solid",
+      "border_radius": 2,
+      "animations_enabled": true
+    }
+  }
+}

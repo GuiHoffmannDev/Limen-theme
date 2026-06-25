@@ -1,0 +1,127 @@
+{%- comment -%}
+  Quote editorial — a single, strong serif quotation. Optional portal mark above
+  and an attribution below. Calm, centred, lots of air.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="quote section color-{{ s.color_scheme }} quote--{{ s.alignment }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width page-width--narrow">
+    <figure class="quote__figure" data-animate="{{ settings.animation_reveal_style }}">
+      {%- if s.show_symbol -%}
+        <span class="quote__mark" aria-hidden="true">
+          <svg viewBox="0 0 48 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 63V25a19 19 0 0 1 38 0v38"/>
+            <path d="M16 63V27a8 8 0 0 1 16 0v36"/>
+            <path d="M5 63h38"/>
+          </svg>
+        </span>
+      {%- endif -%}
+
+      <blockquote class="quote__text">
+        {{ s.quote | escape }}{% if s.quote_emphasis != blank %} <em>{{ s.quote_emphasis | escape }}</em>{% endif %}
+      </blockquote>
+
+      {%- if s.attribution != blank or s.attribution_role != blank -%}
+        <figcaption class="quote__cite">
+          {%- if s.attribution != blank -%}<span class="quote__cite-name">{{ s.attribution | escape }}</span>{%- endif -%}
+          {%- if s.attribution_role != blank -%}<span class="quote__cite-role">{{ s.attribution_role | escape }}</span>{%- endif -%}
+        </figcaption>
+      {%- endif -%}
+    </figure>
+  </div>
+</section>
+
+{% stylesheet %}
+  .quote { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .quote__figure { margin: 0; display: flex; flex-direction: column; gap: var(--space-md); }
+  .quote--center .quote__figure { align-items: center; text-align: center; }
+  .quote__mark { color: rgb(var(--color-accent)); }
+  .quote__mark svg { width: 1.75rem; height: auto; }
+  .quote__text {
+    font-family: var(--font-display, "Instrument Serif", Georgia, serif);
+    font-size: calc(var(--text-3xl) * var(--heading-scale, 1));
+    line-height: var(--leading-tight);
+    letter-spacing: -0.01em;
+    max-width: 20ch;
+    text-wrap: balance;
+  }
+  .quote--center .quote__text { margin-inline: auto; }
+  .quote__text em { color: rgb(var(--color-accent)); }
+  .quote__cite { display: flex; flex-direction: column; gap: 0.15rem; }
+  .quote__cite-name { font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif); font-weight: 500; font-size: var(--text-sm); }
+  .quote__cite-role { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.6); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quote editorial",
+  "tag": "section",
+  "class": "quote-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-sage"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_symbol",
+      "label": "Show portal mark",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Quote"
+    },
+    {
+      "type": "text",
+      "id": "quote",
+      "label": "Quote",
+      "default": "Precision does not require"
+    },
+    {
+      "type": "text",
+      "id": "quote_emphasis",
+      "label": "Quote emphasis (italic accent)",
+      "default": "sterility."
+    },
+    {
+      "type": "text",
+      "id": "attribution",
+      "label": "Attribution name"
+    },
+    {
+      "type": "text",
+      "id": "attribution_role",
+      "label": "Attribution role"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quote editorial",
+      "settings": {
+        "color_scheme": "scheme-sage"
+      }
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-contact",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "eyebrow": "Contact",
+        "heading": "Start a",
+        "heading_emphasis": "conversation.",
+        "body": "<p>Questions about an object, an order, a collaboration? Write to us — a real person will reply.</p>",
+        "show_details": true,
+        "show_social": true
+      }
+    }
+  },
+  "order": ["main"]
+}

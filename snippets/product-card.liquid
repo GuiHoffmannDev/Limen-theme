@@ -1,0 +1,109 @@
+{%- comment -%}
+  Editorial product card — a real Shopify product presented as a quiet object.
+  Almost no box: image, discreet title, price, optional vendor / badges /
+  quick-add. Second image swaps in on hover when enabled. Reused by
+  featured-collection-editorial and (stage 4) collection / search grids.
+
+  Accepts:
+    product        - (product) required
+    image_ratio    - (string)  natural|square|portrait|landscape (default: settings.card_image_ratio)
+    show_vendor    - (bool)     default: settings.show_vendor
+    show_badges    - (bool)     default: settings.show_badges
+    show_quick_add - (bool)     default: settings.show_quick_add
+    loading        - (string)   'lazy' (default) | 'eager'
+    sizes          - (string)   image sizes attr (default: editorial grid)
+    index          - (number)   1-based position, for animation stagger
+{%- endcomment -%}
+{%- liquid
+  assign ratio = image_ratio | default: settings.card_image_ratio
+  assign with_vendor = show_vendor
+  if show_vendor == nil
+    assign with_vendor = settings.show_vendor
+  endif
+  assign with_badges = show_badges
+  if show_badges == nil
+    assign with_badges = settings.show_badges
+  endif
+  assign with_quick_add = show_quick_add
+  if show_quick_add == nil
+    assign with_quick_add = settings.show_quick_add
+  endif
+  assign card_loading = loading | default: 'lazy'
+  assign card_sizes = sizes | default: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw'
+  assign second_image = product.images[1]
+  assign delay = 0
+  if index != blank
+    assign delay = index | minus: 1 | times: 70
+  endif
+-%}
+<article
+  class="card product-card"
+  data-animate="{{ settings.animation_reveal_style }}"
+  {% if delay > 0 %}style="--animate-delay: {{ delay }}ms;"{% endif %}
+>
+  <div class="card__media card__media--ratio-{{ ratio }}">
+    <a
+      class="card__media-link"
+      href="{{ product.url }}"
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      {%- if product.featured_media -%}
+        {%- render 'responsive-image',
+          image: product.featured_media.preview_image,
+          sizes: card_sizes,
+          loading: card_loading,
+          widths: '200, 300, 400, 500, 600, 750, 900',
+          alt: product.featured_media.alt
+        -%}
+      {%- else -%}
+        <div class="placeholder-svg" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+      {%- endif -%}
+
+      {%- if settings.hover_image_swap and second_image != blank -%}
+        <div class="card__media-secondary">
+          {%- render 'responsive-image',
+            image: second_image,
+            sizes: card_sizes,
+            loading: 'lazy',
+            widths: '200, 300, 400, 500, 600, 750, 900',
+            alt: second_image.alt
+          -%}
+        </div>
+      {%- endif -%}
+    </a>
+
+    {%- if with_badges -%}
+      <div class="card__badges">
+        {%- render 'product-badges', product: product -%}
+      </div>
+    {%- endif -%}
+
+    {%- if with_quick_add and product.available -%}
+      <div class="card__quick-add">
+        {%- if product.variants.size > 1 -%}
+          <a href="{{ product.url }}" class="button button--solid button--small">{{ 'products.product.choose_options' | t }}</a>
+        {%- else -%}
+          {%- form 'product', product, class: 'card__quick-add-form' -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button type="submit" name="add" class="button button--solid button--small" data-add-to-cart>
+              {{ 'products.product.add_to_cart' | t }}
+            </button>
+          {%- endform -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="card__info">
+    {%- if with_vendor and product.vendor != blank -%}
+      <p class="card__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+    <h3 class="card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+    <div class="card__meta">
+      {%- render 'price', product: product -%}
+    </div>
+  </div>
+</article>

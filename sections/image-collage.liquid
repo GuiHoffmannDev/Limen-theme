@@ -1,0 +1,144 @@
+{%- comment -%}
+  Image collage — an asymmetric editorial arrangement of images. Each image is a
+  reorderable block with its own width and an optional vertical shift, so the
+  composition feels composed rather than gridded. Captions optional.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="collage section color-{{ s.color_scheme }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width page-width--wide">
+    {%- if s.eyebrow != blank or s.heading != blank -%}
+      <div class="section-header collage__header{% if s.center_heading %} section-header--center{% endif %}" data-animate="{{ settings.animation_reveal_style }}">
+        {%- if s.eyebrow != blank -%}<p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="section-header__title">{{ s.heading | escape }}</h2>{%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="collage__grid">
+        {%- for block in section.blocks -%}
+          <figure
+            class="collage__item collage__item--w-{{ block.settings.width }}{% if block.settings.shift %} collage__item--shift{% endif %}"
+            data-animate="{{ settings.animation_reveal_style }}"
+            style="--animate-delay: {{ forloop.index0 | times: 80 }}ms;"
+            {{ block.shopify_attributes }}
+          >
+            <div class="collage__media">
+              {%- if block.settings.image != blank -%}
+                {%- render 'responsive-image', image: block.settings.image, sizes: '(min-width: 750px) 50vw, 90vw', widths: '400, 600, 800, 1000, 1300' -%}
+              {%- else -%}
+                <div class="placeholder-svg" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+              {%- endif -%}
+            </div>
+            {%- if block.settings.caption != blank -%}<figcaption class="collage__caption">{{ block.settings.caption | escape }}</figcaption>{%- endif -%}
+          </figure>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .collage { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .collage__header { margin-bottom: var(--space-xl); }
+  .collage__grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+    align-items: start;
+  }
+  .collage__item { margin: 0; }
+  .collage__item--w-third { grid-column: span 2; }
+  .collage__item--w-half { grid-column: span 3; }
+  .collage__item--w-twothirds { grid-column: span 4; }
+  .collage__item--w-full { grid-column: span 6; }
+  .collage__item--shift { margin-top: clamp(1.5rem, 1rem + 4vw, 5rem); }
+  .collage__media { overflow: hidden; border-radius: var(--border-radius, 2px); }
+  .collage__media img,
+  .collage__media .placeholder-svg { width: 100%; height: auto; display: block; }
+  .collage__caption { margin-top: 0.55rem; font-size: var(--text-xs); letter-spacing: 0.02em; color: rgb(var(--color-foreground) / 0.55); }
+
+  @media (max-width: 749px) {
+    .collage__grid { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+    .collage__item { grid-column: span 1; }
+    .collage__item--w-twothirds,
+    .collage__item--w-full { grid-column: span 2; }
+    .collage__item--shift { margin-top: 0; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Image collage",
+  "tag": "section",
+  "class": "collage-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "The world of LIMEN"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "checkbox",
+      "id": "center_heading",
+      "label": "Center heading",
+      "default": false
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Image",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "Width",
+          "options": [
+            { "value": "third", "label": "Third" },
+            { "value": "half", "label": "Half" },
+            { "value": "twothirds", "label": "Two thirds" },
+            { "value": "full", "label": "Full" }
+          ],
+          "default": "half"
+        },
+        { "type": "checkbox", "id": "shift", "label": "Shift down", "default": false },
+        { "type": "text", "id": "caption", "label": "Caption" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Image collage",
+      "blocks": [
+        { "type": "image", "settings": { "width": "twothirds" } },
+        { "type": "image", "settings": { "width": "third", "shift": true } },
+        { "type": "image", "settings": { "width": "third" } },
+        { "type": "image", "settings": { "width": "half", "shift": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

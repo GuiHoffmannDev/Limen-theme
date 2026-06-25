@@ -1,0 +1,321 @@
+{%- comment -%}
+  Hero editorial — the threshold. Asymmetric, generous negative space, serif
+  display headline with an optional italic emphasis, optional portal symbol,
+  optional image/video background with overlay. Cooperates with a transparent
+  header (reserves top breathing room; pair with a dark color scheme).
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign has_image = false
+  if s.image != blank or s.image_mobile != blank
+    assign has_image = true
+  endif
+  assign has_media = false
+  if has_image or s.video != blank
+    assign has_media = true
+  endif
+  assign overlay = s.overlay_opacity | divided_by: 100.0
+-%}
+
+<section
+  class="hero color-{{ s.color_scheme }} hero--h-{{ s.height }} hero--align-{{ s.content_alignment }}{% if has_media %} hero--has-media{% endif %}{% if s.reserve_header_space %} hero--reserve-header{% endif %}{% if s.show_texture %} has-texture{% endif %}"
+>
+  {%- if has_media -%}
+    <div class="hero__media" aria-hidden="true">
+      {%- if s.video != blank -%}
+        {{ s.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, image_size: '1280x', class: 'hero__media-video' }}
+      {%- elsif s.image != blank -%}
+        {%- render 'responsive-image',
+          image: s.image,
+          sizes: '100vw',
+          widths: '600, 900, 1200, 1600, 2000, 2600',
+          loading: 'eager',
+          fetchpriority: 'high',
+          class: 'hero__media-img hero__media-img--desktop'
+        -%}
+        {%- if s.image_mobile != blank -%}
+          {%- render 'responsive-image',
+            image: s.image_mobile,
+            sizes: '100vw',
+            widths: '400, 600, 800, 1000, 1300',
+            loading: 'eager',
+            fetchpriority: 'high',
+            class: 'hero__media-img hero__media-img--mobile'
+          -%}
+        {%- endif -%}
+      {%- elsif s.image_mobile != blank -%}
+        {%- render 'responsive-image', image: s.image_mobile, sizes: '100vw', loading: 'eager', fetchpriority: 'high', class: 'hero__media-img' -%}
+      {%- endif -%}
+      {%- if overlay > 0 -%}
+        <div class="hero__overlay" style="opacity: {{ overlay }};"></div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div class="page-width hero__inner">
+    <div class="hero__content stack-md">
+      {%- if s.show_symbol -%}
+        <span class="hero__symbol" data-animate="fade" aria-hidden="true">
+          <svg viewBox="0 0 48 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 63V25a19 19 0 0 1 38 0v38"/>
+            <path d="M16 63V27a8 8 0 0 1 16 0v36"/>
+            <path d="M5 63h38"/>
+          </svg>
+        </span>
+      {%- endif -%}
+
+      {%- if s.eyebrow != blank -%}
+        <p class="hero__eyebrow eyebrow" data-animate="fade" style="--animate-delay: 60ms;">{{ s.eyebrow | escape }}</p>
+      {%- endif -%}
+
+      {%- if s.heading != blank -%}
+        <h1 class="hero__title display" data-animate="{{ settings.animation_reveal_style }}" style="--animate-delay: 120ms;">
+          {{ s.heading | escape }}{% if s.heading_emphasis != blank %} <em>{{ s.heading_emphasis | escape }}</em>{% endif %}
+        </h1>
+      {%- endif -%}
+
+      {%- if s.description != blank -%}
+        <div class="hero__description" data-animate="fade-up" style="--animate-delay: 220ms;">{{ s.description }}</div>
+      {%- endif -%}
+
+      {%- if s.button_primary_label != blank or s.button_secondary_label != blank -%}
+        <div class="hero__actions cluster" data-animate="fade-up" style="--animate-delay: 320ms;">
+          {%- if s.button_primary_label != blank -%}
+            <a href="{{ s.button_primary_link | default: routes.all_products_collection_url }}" class="button button--solid button--large">{{ s.button_primary_label | escape }}</a>
+          {%- endif -%}
+          {%- if s.button_secondary_label != blank -%}
+            <a href="{{ s.button_secondary_link | default: routes.root_url }}" class="link-arrow hero__link-secondary">{{ s.button_secondary_label | escape }}</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .hero {
+    position: relative;
+    display: flex;
+    align-items: var(--hero-align, center);
+    overflow: hidden;
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+  }
+  .hero--h-auto { min-height: auto; padding-block: clamp(4rem, 2rem + 9vw, 9rem); }
+  .hero--h-medium { min-height: 62vh; padding-block: var(--space-2xl); }
+  .hero--h-tall { min-height: 82vh; padding-block: var(--space-2xl); }
+  .hero--h-full { min-height: 100svh; padding-block: var(--space-2xl); }
+  .hero--reserve-header { padding-top: clamp(6rem, 4rem + 6vw, 10rem); }
+
+  .hero__media { position: absolute; inset: 0; z-index: 0; }
+  .hero__media-img,
+  .hero__media-video { width: 100%; height: 100%; object-fit: cover; }
+  .hero__media-img--mobile { display: none; }
+  .hero__overlay { position: absolute; inset: 0; background: rgb(20 20 19); }
+
+  .hero__inner { position: relative; z-index: 1; width: 100%; }
+  .hero__content {
+    width: min(100%, 72rem);
+    max-width: 72rem;
+  }
+  .hero--align-left .hero__content { margin-right: auto; }
+  .hero--align-center .hero__content { margin-inline: auto; text-align: center; align-items: center; max-width: 76rem; }
+  .hero--align-center .hero__eyebrow { justify-content: center; }
+
+  .hero__symbol { color: rgb(var(--color-accent)); }
+  .hero__symbol svg { width: 1.75rem; height: auto; }
+
+  .hero__eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; color: rgb(var(--color-accent)); }
+
+  .hero__title {
+    font-size: calc(var(--text-hero) * var(--heading-scale, 1));
+    line-height: 0.96;
+    letter-spacing: 0;
+    max-width: min(100%, 9.6em);
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+  .hero--align-center .hero__title { max-width: none; }
+
+  .hero__description {
+    max-width: 44ch;
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    color: rgb(var(--color-foreground) / 0.82);
+  }
+  .hero--align-center .hero__description { margin-inline: auto; }
+
+  .hero__actions { margin-top: var(--space-xs); gap: 1.25rem 1.75rem; }
+  .hero__link-secondary { color: rgb(var(--color-foreground)); }
+
+  @media (max-width: 749px) {
+    .hero__media-img--desktop { display: none; }
+    .hero__media-img--mobile { display: block; }
+    .hero__content { max-width: 100%; }
+    .hero__title {
+      font-size: calc(clamp(3rem, 16vw, 5.75rem) * var(--heading-scale, 1));
+      line-height: 0.99;
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero editorial",
+  "tag": "section",
+  "class": "hero-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-dark"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "LIMEN — at the threshold"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Technology begins at the"
+    },
+    {
+      "type": "text",
+      "id": "heading_emphasis",
+      "label": "Heading emphasis (italic accent)",
+      "info": "Rendered in serif italic, in the accent color, after the heading.",
+      "default": "threshold."
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Objects designed to make the relationship between people and technology more natural, thoughtful and tangible.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "button_primary_label",
+      "label": "Primary button",
+      "default": "Explore products"
+    },
+    {
+      "type": "url",
+      "id": "button_primary_link",
+      "label": "Primary link"
+    },
+    {
+      "type": "text",
+      "id": "button_secondary_label",
+      "label": "Secondary link",
+      "default": "Discover LIMEN"
+    },
+    {
+      "type": "url",
+      "id": "button_secondary_link",
+      "label": "Secondary link URL"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "Content alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "height",
+      "label": "Height",
+      "options": [
+        { "value": "auto", "label": "Natural" },
+        { "value": "medium", "label": "Medium" },
+        { "value": "tall", "label": "Tall" },
+        { "value": "full", "label": "Full screen" }
+      ],
+      "default": "tall"
+    },
+    {
+      "type": "checkbox",
+      "id": "reserve_header_space",
+      "label": "Reserve space for a transparent header",
+      "info": "Adds top breathing room so the headline clears a transparent header on the homepage.",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_symbol",
+      "label": "Show LIMEN portal symbol",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Media (optional)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background image (desktop)"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Background image (mobile)"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Background video",
+      "info": "Shopify-hosted. Plays muted, looped, without controls. Overrides the image."
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Media overlay",
+      "default": 35
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero editorial",
+      "settings": {
+        "color_scheme": "scheme-dark",
+        "eyebrow": "LIMEN — at the threshold",
+        "heading": "Technology begins at the",
+        "heading_emphasis": "threshold.",
+        "height": "tall",
+        "reserve_header_space": true,
+        "show_symbol": true
+      }
+    }
+  ]
+}
+{% endschema %}

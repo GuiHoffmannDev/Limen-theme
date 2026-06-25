@@ -1,0 +1,55 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "menu-explore": {
+          "type": "menu",
+          "settings": {
+            "heading": "Explore",
+            "menu": "footer"
+          }
+        },
+        "text-contact": {
+          "type": "text",
+          "settings": {
+            "heading": "Contact",
+            "body": "<p>For enquiries, partnerships and press.</p>"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Notes from the threshold.",
+            "subtext": "Occasional notes on objects, materials and thoughtful interaction."
+          }
+        }
+      },
+      "block_order": ["menu-explore", "text-contact", "newsletter"],
+      "settings": {
+        "color_scheme": "scheme-dark",
+        "tagline": "<p>Objects designed to make the relationship between people and technology more natural, thoughtful and tangible.</p>",
+        "show_social": true,
+        "show_payment_icons": true,
+        "show_country_selector": false,
+        "show_language_selector": false,
+        "show_credit": false
+      }
+    },
+    "cart-drawer": {
+      "type": "cart-drawer",
+      "settings": {
+        "color_scheme": "scheme-ivory"
+      }
+    },
+    "predictive-search": {
+      "type": "predictive-search",
+      "settings": {
+        "color_scheme": "scheme-ivory"
+      }
+    }
+  },
+  "order": ["footer", "cart-drawer", "predictive-search"]
+}

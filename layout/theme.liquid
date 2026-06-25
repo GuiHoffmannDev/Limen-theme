@@ -1,0 +1,248 @@
+<!doctype html>
+<html
+  lang="{{ request.locale.iso_code }}"
+  dir="{% if request.locale.iso_code == 'ar' or request.locale.iso_code == 'he' %}rtl{% else %}ltr{% endif %}"
+  class="no-js{% if settings.show_focus_outline %} focus-always{% endif %}"
+>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#FAF9F5">
+
+    {%- comment -%} Canonical + title + description are emitted by the meta-tags snippet below. {%- endcomment -%}
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+    {%- else -%}
+      <link rel="icon" type="image/svg+xml" href="{{ 'limen-symbol.svg' | asset_url }}">
+    {%- endif -%}
+
+    {%- comment -%}
+      Fonts: serif display via Google Fonts (body uses the Shopify font library).
+      RemoteAsset is intentional here — Instrument Serif / Source Serif 4 are not in
+      Shopify's hosted font library, so we load them from Google Fonts with preconnect
+      + async (media=print/onload) + display:swap and a <noscript> fallback. The rule
+      is disabled only for this block so genuine stray remote assets still get flagged.
+    {%- endcomment -%}
+    {% # theme-check-disable RemoteAsset %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {%- if settings.heading_font_family == 'source_serif' -%}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap" media="print" onload="this.media='all'">
+      <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap"></noscript>
+    {%- else -%}
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" media="print" onload="this.media='all'">
+      <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap"></noscript>
+    {%- endif -%}
+    {% # theme-check-enable RemoteAsset %}
+
+    {%- liquid
+      assign body_font = settings.body_font
+      assign body_font_medium = body_font | font_modify: 'weight', '500'
+      assign body_font_bold = body_font | font_modify: 'weight', '600'
+      assign body_font_italic = body_font | font_modify: 'style', 'italic'
+
+      if settings.heading_font_family == 'source_serif'
+        assign font_display_stack = '"Source Serif 4", Georgia, "Times New Roman", serif'
+      else
+        assign font_display_stack = '"Instrument Serif", Georgia, "Times New Roman", serif'
+      endif
+
+      assign heading_scale = settings.heading_scale | divided_by: 100.0
+      assign body_scale = settings.body_scale | divided_by: 100.0
+      assign border_opacity = settings.border_opacity | divided_by: 100.0
+    -%}
+
+    {% style %}
+      {{ body_font | font_face: font_display: 'swap' }}
+      {{ body_font_medium | font_face: font_display: 'swap' }}
+      {{ body_font_bold | font_face: font_display: 'swap' }}
+      {{ body_font_italic | font_face: font_display: 'swap' }}
+
+      :root {
+        --font-display: {{ font_display_stack }};
+        --font-body: {{ body_font.family }}, {{ body_font.fallback_families }};
+        --heading-scale: {{ heading_scale }};
+        --body-scale: {{ body_scale }};
+        --label-tracking: {{ settings.letter_spacing_label }};
+        --border-opacity: {{ border_opacity }};
+        --page-width: {{ settings.page_width }}px;
+        --page-margin: {{ settings.page_margin }}px;
+        --page-margin-mobile: 1.25rem;
+        --border-radius: {{ settings.border_radius }}px;
+        --button-radius: {{ settings.button_radius }}px;
+        --button-text-transform: {% if settings.button_uppercase %}uppercase{% else %}none{% endif %};
+        --section-spacing: {{ settings.section_spacing }}px;
+      }
+
+      {%- for scheme in settings.color_schemes -%}
+        {%- assign s = scheme.settings -%}
+        .color-{{ scheme.id }} {
+          --color-background: {{ s.background.red }} {{ s.background.green }} {{ s.background.blue }};
+          --color-foreground: {{ s.text.red }} {{ s.text.green }} {{ s.text.blue }};
+          --color-accent: {{ s.accent.red }} {{ s.accent.green }} {{ s.accent.blue }};
+          --color-highlight: {{ s.highlight.red }} {{ s.highlight.green }} {{ s.highlight.blue }};
+          --color-button: {{ s.button.red }} {{ s.button.green }} {{ s.button.blue }};
+          --color-button-label: {{ s.button_label.red }} {{ s.button_label.green }} {{ s.button_label.blue }};
+          --color-secondary-button-label: {{ s.secondary_button_label.red }} {{ s.secondary_button_label.green }} {{ s.secondary_button_label.blue }};
+          --color-border: {{ s.border.red }} {{ s.border.green }} {{ s.border.blue }};
+          color: rgb(var(--color-foreground));
+          background-color: rgb(var(--color-background));
+          {%- if s.background_gradient != blank %}
+          --gradient-background: {{ s.background_gradient }};
+          background: {{ s.background_gradient }};
+          {%- endif %}
+        }
+      {%- endfor -%}
+    {% endstyle %}
+
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'components.css' | asset_url | stylesheet_tag }}
+    {{ 'sections.css' | asset_url | stylesheet_tag }}
+    {{ 'animations.css' | asset_url | stylesheet_tag }}
+
+    {%- render 'meta-tags' -%}
+    {%- render 'social-meta-tags' -%}
+    {%- comment -%}
+      Global JSON-LD lives inline so the storefront cannot fail if a theme upload
+      misses a supporting snippet asset.
+    {%- endcomment -%}
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | append: '/' | json }},
+  {%- if settings.logo -%}
+  "logo": {{ settings.logo | image_url: width: 400 | prepend: 'https:' | json }},
+  {%- endif -%}
+  "description": {{ shop.description | default: shop.name | json }}
+  {%- assign social_links = '' -%}
+  {%- if settings.social_instagram != blank %}{%- assign social_links = social_links | append: settings.social_instagram | append: '||' %}{% endif -%}
+  {%- if settings.social_youtube != blank %}{%- assign social_links = social_links | append: settings.social_youtube | append: '||' %}{% endif -%}
+  {%- if settings.social_linkedin != blank %}{%- assign social_links = social_links | append: settings.social_linkedin | append: '||' %}{% endif -%}
+  {%- if settings.social_x != blank %}{%- assign social_links = social_links | append: settings.social_x | append: '||' %}{% endif -%}
+  {%- if settings.social_tiktok != blank %}{%- assign social_links = social_links | append: settings.social_tiktok | append: '||' %}{% endif -%}
+  {%- assign social_array = social_links | split: '||' -%}
+  {%- if social_array.size > 0 -%}
+  ,"sameAs": [
+    {%- for link in social_array -%}
+      {{ link | json }}{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+  {%- endif -%}
+}
+    </script>
+
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": {{ shop.name | json }},
+  "url": {{ shop.url | append: '/' | json }},
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {{ shop.url | append: '/search?q={search_term_string}' | json }},
+    "query-input": "required name=search_term_string"
+  }
+}
+    </script>
+
+    {%- if settings.show_breadcrumbs -%}
+      {%- assign bc_type = request.page_type -%}
+      {%- if bc_type == 'product' or bc_type == 'collection' or bc_type == 'blog' or bc_type == 'article' or bc_type == 'page' -%}
+        {%- capture breadcrumb_items -%}
+          {%- assign pos = 1 -%}
+          { "@type": "ListItem", "position": {{ pos }}, "name": {{ 'general.breadcrumbs.home' | t | json }}, "item": {{ shop.url | append: '/' | json }} }
+          {%- case bc_type -%}
+            {%- when 'product' -%}
+              {%- if collection.url -%}
+                {%- assign pos = pos | plus: 1 -%}
+                ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }
+              {%- endif -%}
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
+            {%- when 'collection' -%}
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }
+            {%- when 'blog' -%}
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ blog.title | json }}, "item": {{ shop.url | append: blog.url | json }} }
+            {%- when 'article' -%}
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ blog.title | json }}, "item": {{ shop.url | append: blog.url | json }} }
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ article.title | json }}, "item": {{ shop.url | append: article.url | json }} }
+            {%- when 'page' -%}
+              {%- assign pos = pos | plus: 1 -%}
+              ,{ "@type": "ListItem", "position": {{ pos }}, "name": {{ page.title | json }}, "item": {{ shop.url | append: page.url | json }} }
+          {%- endcase -%}
+        {%- endcapture -%}
+        <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{{ breadcrumb_items }}]
+}
+        </script>
+      {%- endif -%}
+    {%- endif -%}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      {%- if settings.animations_enabled -%}
+        document.documentElement.classList.add('animations-enabled');
+      {%- endif -%}
+    </script>
+
+    <script>
+      window.LimenConfig = {
+        moneyFormat: {{ shop.money_format | json }},
+        animationsEnabled: {{ settings.animations_enabled | json }},
+        cartType: {{ settings.cart_type | json }},
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          cartChange: {{ routes.cart_change_url | json }},
+          cartUpdate: {{ routes.cart_update_url | json }},
+          predictiveSearch: {{ routes.predictive_search_url | json }},
+          search: {{ routes.search_url | json }}
+        }
+      };
+    </script>
+
+    <script>
+      window.LimenStrings = {
+        cartItemAdded: {{ 'cart.item_added' | t | json }},
+        cartUpdated: {{ 'cart.updated' | t | json }},
+        cartRemoved: {{ 'cart.removed' | t | json }},
+        cartGenericError: {{ 'cart.generic_error' | t | json }},
+        close: {{ 'accessibility.close' | t | json }},
+        zoomLabel: {{ 'products.product.media_zoom' | t | json }}
+      };
+    </script>
+
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ request.page_type | handle }} color-scheme-ivory">
+    <a class="skip-to-content-link button" href="#MainContent">
+      {{ 'accessibility.skip_to_content' | t }}
+    </a>
+
+    {%- comment -%} Header + announcement live in header-group (added in stage 2) {%- endcomment -%}
+    {% sections 'header-group' %}
+
+    <main id="MainContent" class="content-for-layout" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {%- comment -%} Footer + cart drawer live in footer-group (added in stage 2) {%- endcomment -%}
+    {% sections 'footer-group' %}
+  </body>
+</html>

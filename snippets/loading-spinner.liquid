@@ -1,0 +1,15 @@
+{%- comment -%}
+  Accessible loading spinner built on the .spinner component (components.css).
+  Accepts:
+    class - (string) extra classes
+    label - (string) accessible label (default: accessibility.loading)
+{%- endcomment -%}
+{%- liquid
+  assign spin_label = label
+  if spin_label == blank
+    assign spin_label = 'accessibility.loading' | t
+  endif
+-%}
+<span class="spinner {{ class }}" role="status">
+  <span class="visually-hidden">{{ spin_label }}</span>
+</span>

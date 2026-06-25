@@ -1,0 +1,264 @@
+{%- comment -%}
+  Main search — the full search results page. Real Shopify search across
+  products, articles and pages, with term highlighting, sorting, optional
+  filtering, pagination and a clear empty state. Sorting/filtering reuse the
+  facets pattern (facets.js, Section Rendering API); without JS the form and
+  sort submit as normal GET navigations. The header search drawer
+  (predictive-search) is separate.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign sort_by = search.sort_by | default: 'relevance'
+  assign has_filters = false
+  if search.filters.size > 0
+    assign has_filters = true
+  endif
+  assign anchor = '#MainSearch-' | append: section.id
+-%}
+
+<section id="MainSearch-{{ section.id }}" class="search-page section color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="page-width page-width--wide">
+    {%- render 'breadcrumbs' -%}
+
+    <header class="search-page__head">
+      <h1 class="search-page__title">
+        {%- if search.performed -%}{{ 'search.results_for' | t: terms: search.terms }}{%- else -%}{{ 'search.title' | t }}{%- endif -%}
+      </h1>
+
+      <predictive-search data-section-id="predictive-search" class="search-page__widget">
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search-page__form">
+          <input type="hidden" name="type" value="product,article,page">
+          <span class="search-page__icon">{%- render 'icon', name: 'search' -%}</span>
+          <label class="visually-hidden" for="SearchPageInput">{{ 'search.title' | t }}</label>
+          <input
+            type="search"
+            id="SearchPageInput"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ 'search.placeholder' | t }}"
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+          >
+          <button type="reset" class="search-page__clear" data-predictive-reset aria-label="{{ 'search.reset' | t }}">
+            {%- render 'icon', name: 'close', class: 'icon--sm' -%}
+          </button>
+          <button type="submit" class="button button--solid button--small">{{ 'search.submit' | t }}</button>
+        </form>
+        <div class="search-page__predictive" data-predictive-results></div>
+      </predictive-search>
+    </header>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by s.results_per_page -%}
+        <div class="search-page__results-wrap" data-facet-results data-section-id="{{ section.id }}">
+          {%- if search.results.size > 0 -%}
+            <div class="search-page__toolbar">
+              <p class="search-page__count" data-facet-count aria-live="polite">
+                {{ 'search.results_count' | t: count: search.results_count }}
+              </p>
+              <div class="search-page__controls">
+                {%- if has_filters -%}
+                  <button type="button" class="button button--outline button--small" aria-controls="SearchFilterDrawer">
+                    {%- render 'icon', name: 'menu', class: 'icon--sm' -%}{{ 'products.facets.filter_button' | t }}
+                  </button>
+                {%- endif -%}
+                {%- if search.sort_options.size > 0 -%}
+                  <form method="get" action="{{ routes.search_url }}" class="search-page__sort field">
+                    <input type="hidden" name="q" value="{{ search.terms | escape }}">
+                    <input type="hidden" name="type" value="product,article,page">
+                    <label class="visually-hidden" for="SearchSort-{{ section.id }}">{{ 'products.facets.sort_by_label' | t }}</label>
+                    <div class="select">
+                      <select id="SearchSort-{{ section.id }}" name="sort_by" data-facet-sort>
+                        {%- for option in search.sort_options -%}
+                          <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                    <noscript><button type="submit" class="button button--small">{{ 'products.facets.apply' | t }}</button></noscript>
+                  </form>
+                {%- endif -%}
+              </div>
+            </div>
+
+            <div class="search-page__layout">
+              {%- if has_filters -%}
+                <aside class="search-page__aside">
+                  {%- render 'facets', results: search, action_url: routes.search_url, section: section.id, context: 'inline', terms: search.terms -%}
+                </aside>
+              {%- endif -%}
+
+              <div class="search-page__results" data-product-grid tabindex="-1">
+                <div class="editorial-grid editorial-grid--{{ s.columns }}">
+                  {%- for item in search.results -%}
+                    {%- case item.object_type -%}
+                      {%- when 'product' -%}
+                        {%- render 'product-card', product: item, sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw', index: forloop.index -%}
+                      {%- when 'article' -%}
+                        <article class="card search-card search-card--article">
+                          <a href="{{ item.url }}" class="card__media card__media--ratio-landscape card__media-link">
+                            {%- if item.image -%}
+                              {%- render 'responsive-image', image: item.image, sizes: '(min-width: 990px) 25vw, 50vw', widths: '300, 500, 700', loading: 'lazy', crop: 'center' -%}
+                            {%- endif -%}
+                          </a>
+                          <div class="card__info">
+                            <p class="search-card__type eyebrow">{{ 'blog.title' | t }}</p>
+                            <h3 class="card__title"><a href="{{ item.url }}">{{ item.title | highlight: search.terms }}</a></h3>
+                            {%- if item.excerpt_or_content != blank -%}<p class="search-card__excerpt">{{ item.excerpt_or_content | strip_html | truncatewords: 20 }}</p>{%- endif -%}
+                          </div>
+                        </article>
+                      {%- when 'page' -%}
+                        <article class="card search-card search-card--page">
+                          <div class="card__info">
+                            <p class="search-card__type eyebrow">{{ 'sections.header.menu' | t }}</p>
+                            <h3 class="card__title"><a href="{{ item.url }}">{{ item.title | highlight: search.terms }}</a></h3>
+                            {%- if item.content != blank -%}<p class="search-card__excerpt">{{ item.content | strip_html | truncatewords: 20 }}</p>{%- endif -%}
+                          </div>
+                        </article>
+                    {%- endcase -%}
+                  {%- endfor -%}
+                </div>
+
+                {%- render 'pagination', paginate: paginate, anchor: anchor -%}
+              </div>
+            </div>
+
+            {%- if has_filters -%}
+              <limen-drawer id="SearchFilterDrawer" class="filter-drawer color-{{ s.color_scheme }}">
+                <div class="drawer__overlay" data-drawer-overlay></div>
+                <div class="drawer__panel drawer__panel--left filter-drawer__panel" data-drawer-panel role="dialog" aria-modal="true" aria-label="{{ 'products.facets.filter_and_sort' | t }}">
+                  <div class="drawer__header">
+                    <span class="drawer__title">{{ 'products.facets.filter_by_label' | t }}</span>
+                    <button type="button" class="drawer__close" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">{%- render 'icon', name: 'close' -%}</button>
+                  </div>
+                  <div class="drawer__body">
+                    {%- render 'facets', results: search, action_url: routes.search_url, section: section.id, context: 'drawer', terms: search.terms -%}
+                  </div>
+                </div>
+              </limen-drawer>
+            {%- endif -%}
+          {%- else -%}
+            <div class="empty-state search-page__empty">
+              <p class="empty-state__title">{{ 'search.no_results' | t: terms: search.terms }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="button button--outline">{{ 'collection.view_all' | t }}</a>
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="search-page__prompt">
+        <p>{{ 'search.placeholder' | t }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{%- if settings.predictive_search_enabled -%}
+  <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+{%- endif -%}
+{%- if has_filters or search.sort_options.size > 0 -%}
+  <script src="{{ 'facets.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .search-page { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .search-page__head { margin-bottom: var(--space-xl); }
+  .search-page__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); margin-bottom: var(--space-md); }
+  .search-page__widget { display: block; position: relative; max-width: 40rem; }
+  .search-page__form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1.5px solid rgb(var(--color-foreground));
+  }
+  .search-page__icon { color: rgb(var(--color-foreground) / 0.5); display: inline-flex; }
+  .search-page__form input[type="search"] {
+    flex: 1 1 auto;
+    min-height: 2.5rem;
+    padding: 0.4rem 0;
+    font-size: var(--text-lg);
+    border: none;
+    background: transparent;
+  }
+  .search-page__form input[type="search"]:focus { box-shadow: none; outline: none; }
+  .search-page__form input::-webkit-search-cancel-button { display: none; }
+  .search-page__clear { display: grid; place-content: center; width: 2.25rem; height: 2.25rem; color: rgb(var(--color-foreground) / 0.6); border-radius: 50%; }
+  .search-page__clear:hover { background: rgb(var(--color-foreground) / 0.06); }
+  .search-page__predictive { position: absolute; left: 0; right: 0; z-index: 5; }
+
+  .search-page__toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--hairline);
+    margin-bottom: var(--space-lg);
+  }
+  .search-page__count { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.65); }
+  .search-page__controls { display: flex; align-items: center; gap: 0.75rem; }
+  .search-page__sort { display: flex; align-items: center; gap: 0.5rem; }
+
+  .search-page__layout { display: grid; gap: clamp(1.5rem, 1rem + 2vw, 3rem); align-items: start; }
+  @media (min-width: 990px) {
+    .search-page__layout { grid-template-columns: 16rem 1fr; }
+    .search-page__aside { position: sticky; top: 6rem; }
+  }
+  .search-page__aside { display: none; }
+  @media (min-width: 990px) { .search-page__aside { display: block; } }
+  .search-page__results.is-loading { opacity: 0.5; transition: opacity var(--duration-fast) ease; }
+  .search-page__results-wrap.is-loading { cursor: progress; }
+
+  .search-card__type { color: rgb(var(--color-foreground) / 0.5); }
+  .search-card__excerpt { font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.7); line-height: var(--leading-normal); }
+  .search-card--page { justify-content: center; padding: var(--space-md); border: var(--hairline); border-radius: var(--border-radius, 2px); }
+  .highlight { background: rgb(var(--color-accent) / 0.18); border-radius: 2px; }
+
+  .search-page__empty { padding-block: var(--space-2xl); display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+  .search-page__prompt { color: rgb(var(--color-foreground) / 0.6); }
+
+  .filter-drawer__panel { width: min(92vw, 24rem); }
+  @media (min-width: 990px) { #SearchFilterDrawer { display: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Search",
+  "tag": "section",
+  "class": "main-search-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "3", "label": "3" },
+        { "value": "4", "label": "4" }
+      ],
+      "default": "4"
+    },
+    {
+      "type": "range",
+      "id": "results_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Results per page",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Search"
+    }
+  ]
+}
+{% endschema %}

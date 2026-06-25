@@ -1,0 +1,524 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "LIMEN",
+    "theme_version": "1.0.0",
+    "theme_author": "LIMEN",
+    "theme_documentation_url": "https://github.com/",
+    "theme_support_url": "https://github.com/"
+  },
+  {
+    "name": "Logo & brand",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Marca / Brand"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo (primary)",
+        "info": "Logotipo principal da LIMEN. Recomendado SVG ou PNG transparente. Se vazio, usamos o símbolo + wordmark padrão."
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_inverse",
+        "label": "Logo (inverse / negative)",
+        "info": "Versão clara para fundos escuros (header transparente sobre hero escuro)."
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_symbol",
+        "label": "Symbol only",
+        "info": "Símbolo isolado da LIMEN (portal/limiar). Usado em favicon, divisores e transições."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "min": 60,
+        "max": 240,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width (desktop)",
+        "default": 120
+      },
+      {
+        "type": "range",
+        "id": "logo_width_mobile",
+        "min": 50,
+        "max": 180,
+        "step": 5,
+        "unit": "px",
+        "label": "Logo width (mobile)",
+        "default": 92
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Recomendado 32×32 px (PNG/SVG quadrado)."
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Display / headings"
+      },
+      {
+        "type": "select",
+        "id": "heading_font_family",
+        "label": "Heading font",
+        "info": "Fonte serifada editorial dos títulos. Instrument Serif é o padrão da LIMEN; Source Serif 4 é a alternativa do moodboard.",
+        "options": [
+          { "value": "instrument", "label": "Instrument Serif" },
+          { "value": "source_serif", "label": "Source Serif 4" }
+        ],
+        "default": "instrument"
+      },
+      {
+        "type": "range",
+        "id": "heading_scale",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "label": "Heading size scale",
+        "default": 100
+      },
+      {
+        "type": "checkbox",
+        "id": "heading_italic_emphasis",
+        "label": "Allow italic emphasis in headings",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Body / interface"
+      },
+      {
+        "type": "font_picker",
+        "id": "body_font",
+        "label": "Body font",
+        "default": "ibm_plex_sans_n4",
+        "info": "Fonte de interface, preços, formulários e corpo de texto. Padrão: IBM Plex Sans."
+      },
+      {
+        "type": "range",
+        "id": "body_scale",
+        "min": 90,
+        "max": 120,
+        "step": 5,
+        "unit": "%",
+        "label": "Body size scale",
+        "default": 100
+      },
+      {
+        "type": "range",
+        "id": "letter_spacing_label",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "%",
+        "label": "Label / eyebrow tracking",
+        "info": "Espaçamento entre letras de rótulos e metadados em maiúsculas.",
+        "default": 8
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "background",
+            "label": "Background",
+            "default": "#FAF9F5"
+          },
+          {
+            "type": "color_background",
+            "id": "background_gradient",
+            "label": "Background gradient",
+            "info": "Optional. LIMEN favours flat mineral backgrounds — leave empty unless a campaign block needs it."
+          },
+          {
+            "type": "color",
+            "id": "text",
+            "label": "Text",
+            "default": "#141413"
+          },
+          {
+            "type": "color",
+            "id": "accent",
+            "label": "Accent (terracotta)",
+            "default": "#D97855"
+          },
+          {
+            "type": "color",
+            "id": "highlight",
+            "label": "Secondary accent",
+            "default": "#A6AE95"
+          },
+          {
+            "type": "color",
+            "id": "button",
+            "label": "Solid button background",
+            "default": "#141413"
+          },
+          {
+            "type": "color",
+            "id": "button_label",
+            "label": "Solid button label",
+            "default": "#FAF9F5"
+          },
+          {
+            "type": "color",
+            "id": "secondary_button_label",
+            "label": "Outline button label",
+            "default": "#141413"
+          },
+          {
+            "type": "color",
+            "id": "border",
+            "label": "Lines & borders",
+            "default": "#141413"
+          }
+        ],
+        "role": {
+          "text": "text",
+          "background": {
+            "solid": "background",
+            "gradient": "background_gradient"
+          },
+          "links": "accent",
+          "icons": "text",
+          "primary_button": "button",
+          "on_primary_button": "button_label",
+          "primary_button_border": "button",
+          "secondary_button": "background",
+          "on_secondary_button": "secondary_button_label",
+          "secondary_button_border": "secondary_button_label"
+        }
+      },
+      {
+        "type": "header",
+        "content": "Border opacity"
+      },
+      {
+        "type": "range",
+        "id": "border_opacity",
+        "min": 4,
+        "max": 100,
+        "step": 2,
+        "unit": "%",
+        "label": "Hairline / divider opacity",
+        "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "range",
+        "id": "page_width",
+        "min": 1200,
+        "max": 1800,
+        "step": 20,
+        "unit": "px",
+        "label": "Maximum page width",
+        "default": 1480
+      },
+      {
+        "type": "range",
+        "id": "section_spacing",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "unit": "px",
+        "label": "Spacing between sections",
+        "default": 0
+      },
+      {
+        "type": "range",
+        "id": "page_margin",
+        "min": 16,
+        "max": 80,
+        "step": 2,
+        "unit": "px",
+        "label": "Page side margin (desktop)",
+        "default": 48
+      },
+      {
+        "type": "range",
+        "id": "border_radius",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Global corner radius",
+        "info": "A LIMEN evita cantos muito arredondados. Mantenha discreto.",
+        "default": 2
+      }
+    ]
+  },
+  {
+    "name": "Buttons",
+    "settings": [
+      {
+        "type": "select",
+        "id": "button_style",
+        "label": "Default button style",
+        "options": [
+          { "value": "solid", "label": "Solid" },
+          { "value": "outline", "label": "Outline" }
+        ],
+        "default": "solid"
+      },
+      {
+        "type": "range",
+        "id": "button_radius",
+        "min": 0,
+        "max": 40,
+        "step": 1,
+        "unit": "px",
+        "label": "Button corner radius",
+        "default": 2
+      },
+      {
+        "type": "checkbox",
+        "id": "button_uppercase",
+        "label": "Uppercase button labels",
+        "default": false
+      }
+    ]
+  },
+  {
+    "name": "Animations",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "animations_enabled",
+        "label": "Enable entrance animations",
+        "info": "Fades e reveals editoriais discretos. Sempre respeitam prefers-reduced-motion.",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "animation_reveal_style",
+        "label": "Reveal style",
+        "options": [
+          { "value": "fade", "label": "Fade" },
+          { "value": "fade-up", "label": "Fade up" },
+          { "value": "threshold", "label": "Threshold (portal)" }
+        ],
+        "default": "fade-up"
+      },
+      {
+        "type": "checkbox",
+        "id": "hover_image_swap",
+        "label": "Swap to second product image on hover",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart type",
+        "options": [
+          { "value": "drawer", "label": "Side drawer" },
+          { "value": "page", "label": "Page only" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_note",
+        "label": "Enable order note",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_show_free_shipping",
+        "label": "Show free-shipping progress message",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "cart_free_shipping_threshold",
+        "min": 0,
+        "max": 1000,
+        "step": 10,
+        "unit": "$",
+        "label": "Free-shipping threshold (store currency)",
+        "default": 200
+      }
+    ]
+  },
+  {
+    "name": "Search",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enabled",
+        "label": "Enable predictive search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_products",
+        "label": "Show product results",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_articles",
+        "label": "Show article results",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "predictive_search_pages",
+        "label": "Show page results",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Product card",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "Product image ratio",
+        "options": [
+          { "value": "natural", "label": "Natural" },
+          { "value": "square", "label": "Square (1:1)" },
+          { "value": "portrait", "label": "Portrait (4:5)" },
+          { "value": "landscape", "label": "Landscape (4:3)" }
+        ],
+        "default": "portrait"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "show_badges",
+        "label": "Show sale / sold-out badges",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quick_add",
+        "label": "Show quick add button",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Breadcrumbs",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "show_breadcrumbs",
+        "label": "Show breadcrumbs on inner pages",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "text",
+        "id": "social_linkedin",
+        "label": "LinkedIn URL"
+      },
+      {
+        "type": "text",
+        "id": "social_x",
+        "label": "X / Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest URL"
+      }
+    ]
+  },
+  {
+    "name": "Contact info",
+    "settings": [
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "Contact email"
+      },
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "Contact phone"
+      },
+      {
+        "type": "text",
+        "id": "contact_address",
+        "label": "Address"
+      }
+    ]
+  },
+  {
+    "name": "Social sharing image",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Default sharing image (Open Graph)",
+        "info": "Recomendado 1200×630 px."
+      }
+    ]
+  },
+  {
+    "name": "Accessibility",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "O tema segue WCAG 2.2 AA. Estas opções não desativam recursos essenciais de acessibilidade."
+      },
+      {
+        "type": "checkbox",
+        "id": "show_focus_outline",
+        "label": "Always show focus outlines (not only keyboard)",
+        "default": false
+      }
+    ]
+  }
+]

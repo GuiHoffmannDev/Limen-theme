@@ -1,0 +1,59 @@
+/* ==========================================================================
+   LIMEN — animations.css
+   Discreet, editorial motion. Reveals are opt-in (data-animate) and are
+   activated by theme.js only when animations are enabled + motion is allowed.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  .animations-enabled [data-animate] {
+    opacity: 0;
+    will-change: opacity, transform;
+    transition: opacity var(--duration-slow) var(--ease-threshold),
+                transform var(--duration-slow) var(--ease-threshold);
+    transition-delay: var(--animate-delay, 0ms);
+  }
+
+  .animations-enabled [data-animate="fade-up"] { transform: translateY(1.5rem); }
+  .animations-enabled [data-animate="fade-down"] { transform: translateY(-1.5rem); }
+  .animations-enabled [data-animate="fade-left"] { transform: translateX(1.5rem); }
+  .animations-enabled [data-animate="threshold"] {
+    transform: translateY(1.25rem);
+    clip-path: inset(0 0 100% 0 round 999px 999px 0 0);
+  }
+
+  .animations-enabled [data-animate].is-revealed {
+    opacity: 1;
+    transform: none;
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+
+/* Marquee (text ribbon) */
+@keyframes limen-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee__track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: limen-marquee var(--marquee-duration, 32s) linear infinite;
+}
+.marquee:hover .marquee__track { animation-play-state: paused; }
+
+/* Threshold line draw (portal divider) */
+@keyframes limen-line-draw {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Soft scale on press for tactile feedback */
+@keyframes limen-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+  [data-animate] { opacity: 1 !important; transform: none !important; clip-path: none !important; }
+  * { scroll-behavior: auto !important; }
+}

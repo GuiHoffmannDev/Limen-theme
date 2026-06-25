@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-list-collections",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "eyebrow": "Collections",
+        "heading": "Browse by collection",
+        "layout": "grid",
+        "columns": "3",
+        "image_ratio": "landscape",
+        "sort": "default",
+        "show_count": true
+      }
+    }
+  },
+  "order": ["main"]
+}

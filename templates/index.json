@@ -1,0 +1,136 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-editorial",
+      "settings": {
+        "color_scheme": "scheme-dark"
+      }
+    },
+    "manifesto": {
+      "type": "manifesto-editorial",
+      "settings": {
+        "color_scheme": "scheme-warm-white"
+      }
+    },
+    "principles": {
+      "type": "brand-principles",
+      "blocks": {
+        "p1": { "type": "principle", "settings": { "title": "Human by design", "body": "Shaped around people first — the technology follows." } },
+        "p2": { "type": "principle", "settings": { "title": "Less interface, more interaction", "body": "Fewer screens and menus. More direct, tactile contact." } },
+        "p3": { "type": "principle", "settings": { "title": "Built for touch", "body": "Materials and forms made to be held, not just used." } },
+        "p4": { "type": "principle", "settings": { "title": "Calm technology", "body": "Present when needed, quiet the rest of the time." } },
+        "p5": { "type": "principle", "settings": { "title": "Made to remain useful", "body": "Objects that earn their place and keep it for years." } }
+      },
+      "block_order": ["p1", "p2", "p3", "p4", "p5"],
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "layout": "list"
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection-editorial",
+      "settings": {
+        "color_scheme": "scheme-warm-white",
+        "columns": "4",
+        "products_to_show": 4
+      }
+    },
+    "image_text": {
+      "type": "image-text-editorial",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "image_position": "left"
+      }
+    },
+    "story": {
+      "type": "editorial-story",
+      "settings": {
+        "color_scheme": "scheme-warm-beige",
+        "layout": "entry"
+      }
+    },
+    "featured_product": {
+      "type": "featured-product-editorial",
+      "settings": {
+        "color_scheme": "scheme-ivory"
+      }
+    },
+    "craft": {
+      "type": "material-craft",
+      "blocks": {
+        "c1": { "type": "step", "settings": { "label": "Material", "title": "Anodised aluminium", "note": "Machined from a single billet, bead-blasted and anodised for a warm, matte hand-feel." } },
+        "c2": { "type": "step", "settings": { "label": "Process", "title": "Hand-finished", "note": "Each edge is chamfered and checked by hand before assembly." } },
+        "c3": { "type": "note", "settings": { "title": "Assembled to last", "note": "<p>Held together with screws, not glue — so it can be opened, repaired and kept in use.</p>" } }
+      },
+      "block_order": ["c1", "c2", "c3"],
+      "settings": {
+        "color_scheme": "scheme-warm-white",
+        "columns": "2"
+      }
+    },
+    "collage": {
+      "type": "image-collage",
+      "blocks": {
+        "i1": { "type": "image", "settings": { "width": "twothirds" } },
+        "i2": { "type": "image", "settings": { "width": "third", "shift": true } },
+        "i3": { "type": "image", "settings": { "width": "third" } },
+        "i4": { "type": "image", "settings": { "width": "half", "shift": true } }
+      },
+      "block_order": ["i1", "i2", "i3", "i4"],
+      "settings": {
+        "color_scheme": "scheme-ivory"
+      }
+    },
+    "marquee": {
+      "type": "text-marquee",
+      "settings": {
+        "color_scheme": "scheme-terracotta",
+        "text": "Cross the threshold",
+        "font": "serif"
+      }
+    },
+    "quote": {
+      "type": "quote-editorial",
+      "settings": {
+        "color_scheme": "scheme-sage"
+      }
+    },
+    "journal": {
+      "type": "journal-grid",
+      "settings": {
+        "color_scheme": "scheme-ivory",
+        "columns": "3",
+        "articles_to_show": 3
+      }
+    },
+    "newsletter": {
+      "type": "newsletter-editorial",
+      "settings": {
+        "color_scheme": "scheme-warm-beige",
+        "layout": "center"
+      }
+    },
+    "final_cta": {
+      "type": "final-threshold-cta",
+      "settings": {
+        "color_scheme": "scheme-dark"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "manifesto",
+    "principles",
+    "featured_collection",
+    "image_text",
+    "story",
+    "featured_product",
+    "craft",
+    "collage",
+    "marquee",
+    "quote",
+    "journal",
+    "newsletter",
+    "final_cta"
+  ]
+}

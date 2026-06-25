@@ -1,0 +1,12 @@
+# Shopify Theme Check configuration for the LIMEN theme.
+# Run with:  npx @shopify/cli theme check
+# Docs:      https://shopify.dev/themes/tools/theme-check
+root: "."
+extends: theme-check:recommended
+
+ignore:
+  - node_modules/
+  - img-ref/
+  - LIMEN_SHOPIFY_SPEC.md
+
+# img-ref/ holds private reference screenshots, never published assets.

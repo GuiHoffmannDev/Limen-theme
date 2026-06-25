@@ -1,0 +1,110 @@
+{%- comment -%}
+  A single cart line item, shared by the cart drawer and the cart page.
+  cart-drawer.js enhances quantity changes / removal with AJAX; without JS the
+  surrounding native cart form still updates and the remove link hits the
+  change URL. Base styles live in components.css (.cart-item).
+
+  Accepts:
+    item    - (line_item) required
+    context - (string)   'drawer' (default) | 'page'
+    form    - (string)   optional <form> id to associate the quantity input with
+{%- endcomment -%}
+{%- liquid
+  assign ctx = context | default: 'drawer'
+  assign qty_max = blank
+  if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
+    assign qty_max = item.variant.inventory_quantity
+  endif
+-%}
+<li class="cart-item cart-item--{{ ctx }}" data-cart-item data-key="{{ item.key }}">
+  <a href="{{ item.url }}" class="cart-item__media" tabindex="-1" aria-hidden="true">
+    {%- if item.image -%}
+      {%- render 'responsive-image', image: item.image, sizes: '120px', widths: '88, 120, 176, 240', loading: 'lazy', crop: 'center' -%}
+    {%- else -%}
+      <div class="placeholder-svg" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+    {%- endif -%}
+  </a>
+
+  <div class="cart-item__details">
+    <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+
+    {%- unless item.product.has_only_default_variant -%}
+      <p class="cart-item__variant">{{ item.variant.title }}</p>
+    {%- endunless -%}
+    {%- if item.selling_plan_allocation -%}
+      <p class="cart-item__variant">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+    {%- endif -%}
+
+    {%- assign property_size = item.properties | size -%}
+    {%- if property_size > 0 -%}
+      <ul class="cart-item__properties" role="list">
+        {%- for property in item.properties -%}
+          {%- liquid
+            assign first_char = property.first | slice: 0
+            assign value_blank = false
+            if property.last == blank
+              assign value_blank = true
+            endif
+          -%}
+          {%- unless first_char == '_' or value_blank -%}
+            <li>
+              <span class="cart-item__property-name">{{ property.first }}:</span>
+              {%- if property.last contains '/uploads/' -%}
+                <a href="{{ property.last }}" target="_blank" rel="noopener">{{ property.last | split: '/' | last }}</a>
+              {%- else -%}
+                {{ property.last }}
+              {%- endif -%}
+            </li>
+          {%- endunless -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if item.line_level_discount_allocations.size > 0 -%}
+      <ul class="cart-item__discounts" role="list">
+        {%- for discount in item.line_level_discount_allocations -%}
+          <li class="cart-item__discount">
+            {%- render 'icon', name: 'check', class: 'icon--sm' -%}
+            {{ discount.discount_application.title }} (−{{ discount.amount | money }})
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="cart-item__controls">
+      {%- render 'quantity-selector',
+        name: 'updates[]',
+        value: item.quantity,
+        min: 0,
+        max: qty_max,
+        form: form,
+        key: item.key,
+        aria_suffix: item.product.title,
+        class: 'quantity--sm'
+      -%}
+      <a
+        href="{{ item.url_to_remove }}"
+        class="cart-item__remove"
+        data-cart-remove
+        data-key="{{ item.key }}"
+        aria-label="{{ 'cart.remove' | t }} — {{ item.product.title | escape }}"
+      >
+        {{ 'cart.remove' | t }}
+      </a>
+    </div>
+  </div>
+
+  <div class="cart-item__price">
+    {%- if item.original_line_price != item.final_line_price -%}
+      <span class="cart-item__price-final">{{ item.final_line_price | money }}</span>
+      <s class="cart-item__price-original">{{ item.original_line_price | money }}</s>
+    {%- else -%}
+      <span class="cart-item__price-final">{{ item.original_line_price | money }}</span>
+    {%- endif -%}
+    {%- if item.variant.available and item.quantity > 1 -%}
+      <span class="cart-item__price-each">{{ item.final_price | money }} {{ 'cart.each' | t }}</span>
+    {%- endif -%}
+  </div>
+
+  <div class="cart-item__error" data-cart-item-error role="alert" hidden></div>
+</li>

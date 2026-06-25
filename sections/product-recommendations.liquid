@@ -1,0 +1,24 @@
+{%- comment -%}
+  Product recommendations — rendered in isolation via the Section Rendering API
+  (routes.product_recommendations_url?section_id=product-recommendations&...).
+  <product-recommendations> (product.js) fetches this and swaps in the card list.
+  The intent (related / complementary) and limit are honoured by Shopify on the
+  recommendations object. Real Shopify data only.
+{%- endcomment -%}
+<div class="product-recommendations-section" data-recommendation-list>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    {%- for product in recommendations.products -%}
+      {%- render 'product-card',
+        product: product,
+        sizes: '(min-width: 990px) 22vw, (min-width: 750px) 33vw, 50vw',
+        index: forloop.index
+      -%}
+    {%- endfor -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Product recommendations"
+}
+{% endschema %}

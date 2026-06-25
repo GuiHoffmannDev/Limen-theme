@@ -1,0 +1,524 @@
+{%- comment -%}
+  Header — editorial, discreet. Logo + primary nav + search/account/cart.
+  Sticky and optional transparent-over-hero (homepage) handled by <limen-header>.
+  Mobile navigation lives in an accessible <limen-drawer> (focus-trap, Escape,
+  scroll-lock all provided by theme.js).
+{%- endcomment -%}
+{%- liquid
+  assign menu = section.settings.menu
+  assign is_index = false
+  if template.name == 'index'
+    assign is_index = true
+  endif
+  assign use_transparent = false
+  if section.settings.transparent_on_index and is_index
+    assign use_transparent = true
+  endif
+  assign show_localization = false
+  if section.settings.show_country_selector or section.settings.show_language_selector
+    assign show_localization = true
+  endif
+-%}
+
+<limen-header
+  class="header-wrapper color-{{ section.settings.color_scheme }}{% if use_transparent %} header-wrapper--transparent{% endif %}"
+  {% if section.settings.sticky %}data-sticky{% endif %}
+  {% if use_transparent %}data-transparent{% endif %}
+>
+  <div class="header page-width page-width--wide header--{{ section.settings.logo_position }}" data-header-inner>
+    {%- comment -%} Mobile: menu toggle {%- endcomment -%}
+    <button
+      type="button"
+      class="header__action header__menu-toggle"
+      aria-controls="MobileMenu"
+      aria-label="{{ 'accessibility.open_menu' | t }}"
+    >
+      {%- render 'icon', name: 'menu' -%}
+    </button>
+
+    {%- comment -%} Logo {%- endcomment -%}
+    <a
+      href="{{ routes.root_url }}"
+      class="header__logo-link"
+      aria-label="{{ shop.name | escape }} — {{ 'general.breadcrumbs.home' | t }}"
+    >
+      {%- render 'brand-logo', width: settings.logo_width, inverse: use_transparent -%}
+    </a>
+
+    {%- comment -%} Desktop primary navigation {%- endcomment -%}
+    {%- if menu != blank and menu.links.size > 0 -%}
+      <nav class="header__nav" aria-label="{{ 'sections.header.menu' | t }}">
+        <ul class="header__menu" role="list">
+          {%- for link in menu.links -%}
+            <li class="header__menu-item{% if link.links.size > 0 %} has-dropdown{% endif %}">
+              <a
+                href="{{ link.url }}"
+                class="header__menu-link"
+                {% if link.current or link.child_active %}aria-current="page"{% endif %}
+                {% if link.links.size > 0 %}aria-haspopup="true"{% endif %}
+              >
+                {{ link.title }}
+              </a>
+              {%- if link.links.size > 0 -%}
+                <div class="header__dropdown">
+                  <ul class="header__dropdown-list" role="list">
+                    {%- for child in link.links -%}
+                      <li>
+                        <a
+                          href="{{ child.url }}"
+                          class="header__dropdown-link"
+                          {% if child.current %}aria-current="page"{% endif %}
+                        >
+                          {{ child.title }}
+                        </a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+
+    {%- comment -%} Actions {%- endcomment -%}
+    <div class="header__actions">
+      {%- if show_localization -%}
+        <div class="header__localization">
+          {%- if section.settings.show_country_selector -%}
+            {%- render 'localization-selector', type: 'country', id: 'header-country' -%}
+          {%- endif -%}
+          {%- if section.settings.show_language_selector -%}
+            {%- render 'localization-selector', type: 'language', id: 'header-language' -%}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_search -%}
+        <button
+          type="button"
+          class="header__action"
+          aria-controls="SearchDrawer"
+          aria-label="{{ 'accessibility.search' | t }}"
+        >
+          {%- render 'icon', name: 'search' -%}
+        </button>
+      {%- endif -%}
+
+      {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+        <a
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+          class="header__action header__action--desktop"
+          aria-label="{{ 'accessibility.account' | t }}"
+        >
+          {%- render 'icon', name: 'account' -%}
+        </a>
+      {%- endif -%}
+
+      {%- if settings.cart_type == 'drawer' -%}
+        <button
+          type="button"
+          class="header__action header__action--cart"
+          aria-controls="CartDrawer"
+          aria-label="{{ 'accessibility.cart' | t }}"
+        >
+          {%- render 'icon', name: 'cart' -%}
+          <span class="header__cart-count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        </button>
+      {%- else -%}
+        <a href="{{ routes.cart_url }}" class="header__action header__action--cart" aria-label="{{ 'accessibility.cart' | t }}">
+          {%- render 'icon', name: 'cart' -%}
+          <span class="header__cart-count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Mobile navigation drawer {%- endcomment -%}
+  <limen-drawer id="MobileMenu" class="mobile-menu color-{{ section.settings.color_scheme }}">
+    <div class="drawer__overlay" data-drawer-overlay></div>
+    <div
+      class="drawer__panel drawer__panel--left mobile-menu__panel"
+      data-drawer-panel
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'accessibility.menu' | t }}"
+    >
+      <div class="drawer__header">
+        <span class="mobile-menu__brand">
+          {%- render 'brand-logo', width: settings.logo_width_mobile -%}
+        </span>
+        <button type="button" class="drawer__close" data-drawer-close aria-label="{{ 'accessibility.close_menu' | t }}">
+          {%- render 'icon', name: 'close' -%}
+        </button>
+      </div>
+
+      <div class="drawer__body">
+        {%- if menu != blank and menu.links.size > 0 -%}
+          <nav class="mobile-menu__nav" aria-label="{{ 'sections.header.menu' | t }}">
+            <ul class="mobile-menu__list" role="list">
+              {%- for link in menu.links -%}
+                <li class="mobile-menu__item">
+                  {%- if link.links.size > 0 -%}
+                    <div class="mobile-menu__row">
+                      <a href="{{ link.url }}" class="mobile-menu__link"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+                      <button
+                        type="button"
+                        class="mobile-menu__expand"
+                        data-submenu-toggle
+                        aria-expanded="false"
+                        aria-controls="MobileSub-{{ forloop.index }}"
+                        aria-label="{{ 'sections.header.submenu_toggle' | t: title: link.title }}"
+                      >
+                        {%- render 'icon', name: 'plus', class: 'icon--sm' -%}
+                      </button>
+                    </div>
+                    <ul id="MobileSub-{{ forloop.index }}" class="mobile-menu__sub" role="list" hidden>
+                      {%- for child in link.links -%}
+                        <li>
+                          <a href="{{ child.url }}" class="mobile-menu__sublink"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}</a>
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  {%- else -%}
+                    <a href="{{ link.url }}" class="mobile-menu__link"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+                  {%- endif -%}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </nav>
+        {%- endif -%}
+
+        <div class="mobile-menu__footer">
+          {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
+            <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="mobile-menu__account link-arrow">
+              {%- render 'icon', name: 'account', class: 'icon--sm' -%}
+              {% if customer %}{{ 'customer.account' | t }}{% else %}{{ 'customer.log_in' | t }}{% endif %}
+            </a>
+          {%- endif -%}
+
+          {%- if show_localization -%}
+            <div class="mobile-menu__localization">
+              {%- if section.settings.show_country_selector -%}
+                {%- render 'localization-selector', type: 'country', id: 'mobile-country' -%}
+              {%- endif -%}
+              {%- if section.settings.show_language_selector -%}
+                {%- render 'localization-selector', type: 'language', id: 'mobile-language' -%}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </limen-drawer>
+</limen-header>
+
+<script src="{{ 'header.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  /* Positioning resolves against the section-group wrapper (a direct child of
+     <body>) so sticky works against the page, not the short header box. Sticky
+     is the CSS default (no JS needed for the common case); header.js opts out
+     (.is-static), switches to a transparent overlay (.is-transparent /
+     .is-fixed), or falls back to the section wrapper (.is-sticky) if no group
+     wrapper is present. */
+  .shopify-section-group-header-group {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .shopify-section-group-header-group.is-static,
+  .header-section.is-static { position: static; }
+  .header-section.is-sticky { position: sticky; top: 0; z-index: 40; }
+  .shopify-section-group-header-group.is-transparent,
+  .header-section.is-transparent { position: absolute; left: 0; right: 0; z-index: 40; }
+  .shopify-section-group-header-group.is-transparent.is-fixed,
+  .header-section.is-transparent.is-fixed { position: fixed; top: 0; }
+
+  .header-wrapper {
+    background-color: rgb(var(--color-background));
+    color: rgb(var(--color-foreground));
+    border-bottom: var(--hairline);
+    transition: background-color var(--duration-base) var(--ease-out-soft),
+                border-color var(--duration-base) var(--ease-out-soft),
+                box-shadow var(--duration-base) var(--ease-out-soft);
+  }
+  .header-wrapper.is-scrolled:not(.header-wrapper--transparent) {
+    box-shadow: 0 1px 0 var(--hairline-color);
+  }
+  .header-wrapper--transparent {
+    background-color: transparent;
+    border-bottom-color: transparent;
+  }
+  .header-wrapper--transparent.is-solid {
+    background-color: rgb(var(--color-background));
+    border-bottom-color: var(--hairline-color);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+    min-height: 4.25rem;
+    padding-block: 0.75rem;
+  }
+
+  .header__logo-link {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+  }
+  .header__logo-link:hover { color: rgb(var(--color-accent)); }
+
+  .brand-logo--default {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .brand-logo__glyph { width: 1.3rem; height: 1.7rem; }
+  .brand-logo__type {
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-weight: 500;
+    font-size: 1.18rem;
+    letter-spacing: 0.26em;
+    text-indent: 0.26em;
+    line-height: 1;
+  }
+  .brand-logo__image { height: auto; }
+
+  /* Navigation -------------------------------------------------------------- */
+  .header__nav { display: none; }
+  .header__menu {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 0.5rem + 1.5vw, 2.25rem);
+  }
+  .header__menu-item { position: relative; }
+  .header__menu-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding-block: 0.4rem;
+    font-size: var(--text-sm);
+    letter-spacing: 0.01em;
+    color: rgb(var(--color-foreground));
+    position: relative;
+  }
+  .header__menu-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 1px;
+    background: rgb(var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-threshold);
+  }
+  .header__menu-link:hover::after,
+  .header__menu-item:focus-within > .header__menu-link::after,
+  .header__menu-link[aria-current="page"]::after { transform: scaleX(1); }
+
+  .header__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 0.5rem);
+    min-width: 12rem;
+    padding: 0.5rem;
+    background: rgb(var(--color-background));
+    border: var(--hairline);
+    border-radius: var(--border-radius, 2px);
+    box-shadow: 0 12px 36px -16px rgb(20 20 19 / 0.28);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--duration-fast) ease, transform var(--duration-fast) var(--ease-out-soft);
+  }
+  .header__menu-item:hover .header__dropdown,
+  .header__menu-item:focus-within .header__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+  .header__dropdown-link {
+    display: block;
+    padding: 0.55rem 0.7rem;
+    font-size: var(--text-sm);
+    border-radius: var(--border-radius, 2px);
+    white-space: nowrap;
+  }
+  .header__dropdown-link:hover { background: rgb(var(--color-foreground) / 0.06); color: rgb(var(--color-accent)); }
+
+  /* Actions ----------------------------------------------------------------- */
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+  }
+  .header__localization { display: none; }
+  .header__action {
+    position: relative;
+    display: grid;
+    place-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: rgb(var(--color-foreground));
+    border-radius: 50%;
+    transition: background-color var(--duration-fast) ease, color var(--duration-fast) ease;
+  }
+  .header__action:hover { background: rgb(var(--color-foreground) / 0.06); color: rgb(var(--color-accent)); }
+  .header__action--desktop { display: none; }
+  .header__cart-count {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.3rem;
+    min-width: 1.05rem;
+    height: 1.05rem;
+    padding: 0 0.2rem;
+    display: grid;
+    place-content: center;
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1;
+    /* Foreground/background pair guarantees WCAG AA contrast on every scheme. */
+    color: rgb(var(--color-background));
+    background: rgb(var(--color-foreground));
+    border-radius: 999px;
+  }
+  .header__cart-count[hidden] { display: none; }
+
+  .header__menu-toggle { display: grid; }
+
+  /* Center logo variant ----------------------------------------------------- */
+  @media (min-width: 990px) {
+    .header__menu-toggle { display: none; }
+    .header__nav { display: block; }
+    .header__action--desktop { display: grid; }
+    .header__localization { display: flex; align-items: center; gap: 0.5rem; }
+
+    .header--left .header__nav { margin-left: clamp(1rem, -1rem + 4vw, 3rem); }
+
+    .header--center {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+    }
+    .header--center .header__nav { justify-self: start; order: 1; }
+    .header--center .header__logo-link { order: 2; justify-self: center; }
+    .header--center .header__actions { order: 3; justify-self: end; }
+  }
+
+  /* Mobile menu drawer ------------------------------------------------------ */
+  .mobile-menu__list { display: flex; flex-direction: column; }
+  .mobile-menu__item { border-bottom: var(--hairline); }
+  .mobile-menu__row { display: flex; align-items: center; justify-content: space-between; }
+  .mobile-menu__link {
+    display: block;
+    padding: 0.95rem 0;
+    font-family: var(--font-display, "Instrument Serif", Georgia, serif);
+    font-size: var(--text-xl);
+    line-height: 1.1;
+  }
+  .mobile-menu__link[aria-current="page"] { color: rgb(var(--color-accent)); }
+  .mobile-menu__expand {
+    display: grid;
+    place-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    color: rgb(var(--color-foreground));
+  }
+  .mobile-menu__expand .icon { transition: transform var(--duration-base) var(--ease-out-soft); }
+  .mobile-menu__expand[aria-expanded="true"] .icon { transform: rotate(45deg); }
+  .mobile-menu__sub { padding: 0 0 0.85rem 0.25rem; display: flex; flex-direction: column; gap: 0.15rem; }
+  .mobile-menu__sublink { display: block; padding: 0.4rem 0; font-size: var(--text-md); color: rgb(var(--color-foreground) / 0.78); }
+  .mobile-menu__sublink:hover { color: rgb(var(--color-accent)); }
+  .mobile-menu__footer {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+  .mobile-menu__localization { display: flex; flex-wrap: wrap; gap: 1rem; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "header",
+  "class": "header-section",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "label": "Desktop logo position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "header",
+      "content": "Behaviour"
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_on_index",
+      "label": "Transparent over homepage hero",
+      "info": "Best with a dark hero and a dark color scheme above. The header turns solid on scroll.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Show search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "Show country/region selector",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_language_selector",
+      "label": "Show language selector",
+      "default": false
+    }
+  ]
+}
+{% endschema %}

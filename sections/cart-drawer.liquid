@@ -1,0 +1,170 @@
+{%- comment -%}
+  Cart drawer — opens from the header cart button via <limen-drawer> (focus-trap,
+  Escape, scroll-lock from theme.js). Server-rendered and fully functional without
+  JS: quantities submit through the native cart form, remove links hit the change
+  URL. cart-drawer.js layers AJAX on top (no reload, aria-live updates) via the
+  <cart-items> element and the [data-cart-contents] swap region. The static header
+  (count) is kept across swaps and synced through the cartUpdate event. Rendered
+  only when the cart is in drawer mode.
+{%- endcomment -%}
+{%- if settings.cart_type == 'drawer' -%}
+  <limen-drawer id="CartDrawer" class="cart-drawer color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
+    <div class="drawer__overlay" data-drawer-overlay></div>
+    <div
+      class="drawer__panel drawer__panel--right cart-drawer__panel"
+      data-drawer-panel
+      role="dialog"
+      aria-modal="true"
+      aria-label="{{ 'cart.title' | t }}"
+    >
+      <div class="drawer__header">
+        <span class="drawer__title">
+          {{ 'cart.title' | t }}
+          <span class="cart-drawer__count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        </span>
+        <button type="button" class="drawer__close" data-drawer-close aria-label="{{ 'accessibility.close' | t }}">
+          {%- render 'icon', name: 'close' -%}
+        </button>
+      </div>
+
+      <cart-items class="cart-drawer__root" data-cart-root data-section-id="{{ section.id }}">
+        <div class="cart-drawer__contents" data-cart-contents data-item-count="{{ cart.item_count }}">
+          {%- if cart.item_count == 0 -%}
+            <div class="drawer__body">
+              <div class="empty-state cart-drawer__empty">
+                <p class="empty-state__title">{{ 'cart.empty' | t }}</p>
+                <button type="button" class="button button--outline" data-drawer-close>{{ 'cart.empty_continue' | t }}</button>
+              </div>
+            </div>
+          {%- else -%}
+            <div class="drawer__body">
+              {%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+                {%- assign threshold = settings.cart_free_shipping_threshold | times: 100 -%}
+                {%- assign remaining = threshold | minus: cart.total_price -%}
+                <div class="cart-drawer__shipping" data-free-shipping>
+                  {%- if remaining > 0 -%}
+                    {%- assign remaining_money = remaining | money -%}
+                    <p>{{ 'cart.free_shipping_progress' | t: amount: remaining_money }}</p>
+                    {%- assign progress = cart.total_price | times: 100 | divided_by: threshold -%}
+                  {%- else -%}
+                    <p>{{ 'cart.free_shipping_reached' | t }}</p>
+                    {%- assign progress = 100 -%}
+                  {%- endif -%}
+                  <div class="cart-drawer__shipping-bar" role="presentation"><span style="width: {{ progress }}%;"></span></div>
+                </div>
+              {%- endif -%}
+
+              <form action="{{ routes.cart_url }}" method="post" id="cart-drawer-form" class="cart-drawer__form">
+                <ul class="cart-drawer__items" role="list" aria-live="polite">
+                  {%- for item in cart.items -%}
+                    {%- render 'cart-item', item: item, context: 'drawer', form: 'cart-drawer-form' -%}
+                  {%- endfor -%}
+                </ul>
+                <noscript>
+                  <button type="submit" name="update" class="button button--outline button--small button--full">{{ 'cart.update' | t }}</button>
+                </noscript>
+              </form>
+            </div>
+
+            <div class="cart-drawer__footer">
+              {%- if settings.cart_show_note -%}
+                <details class="cart-drawer__note">
+                  <summary>{{ 'cart.note' | t }}</summary>
+                  <label class="visually-hidden" for="CartDrawerNote">{{ 'cart.note' | t }}</label>
+                  <textarea id="CartDrawerNote" name="note" form="cart-drawer-form" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
+                </details>
+              {%- endif -%}
+
+              <div class="cart-drawer__subtotal">
+                <span>{{ 'cart.subtotal' | t }}</span>
+                <span data-cart-subtotal>{{ cart.total_price | money_with_currency }}</span>
+              </div>
+              <p class="cart-drawer__taxnote">{{ 'cart.taxes_and_shipping' | t }}</p>
+
+              <button type="submit" name="checkout" form="cart-drawer-form" class="button button--solid button--full button--large">
+                {{ 'cart.checkout' | t }}
+              </button>
+              <a href="{{ routes.cart_url }}" class="cart-drawer__viewcart link">{{ 'cart.view_cart' | t }}</a>
+            </div>
+          {%- endif -%}
+        </div>
+      </cart-items>
+    </div>
+  </limen-drawer>
+
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .cart-drawer__count {
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: var(--text-sm);
+    color: rgb(var(--color-foreground) / 0.55);
+    vertical-align: 0.15em;
+  }
+  .cart-drawer__count[hidden] { display: none; }
+
+  /* Flex column so the items scroll and the footer pins to the bottom. */
+  .cart-drawer__root { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  .cart-drawer__contents { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+
+  .cart-drawer__empty { padding-block: var(--space-2xl); display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+
+  .cart-drawer__shipping { margin-bottom: var(--space-md); font-size: var(--text-sm); }
+  .cart-drawer__shipping-bar {
+    margin-top: 0.5rem;
+    height: 3px;
+    background: rgb(var(--color-foreground) / 0.12);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cart-drawer__shipping-bar span {
+    display: block;
+    height: 100%;
+    background: rgb(var(--color-accent));
+    transition: width var(--duration-slow) var(--ease-threshold);
+  }
+
+  .cart-drawer__items { display: flex; flex-direction: column; }
+
+  .cart-drawer__footer {
+    flex: none;
+    padding: var(--space-md);
+    border-top: var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    background: rgb(var(--color-background));
+  }
+  .cart-drawer__note summary {
+    font-size: var(--text-sm);
+    cursor: pointer;
+    padding-block: 0.4rem;
+    color: rgb(var(--color-foreground) / 0.7);
+  }
+  .cart-drawer__note textarea { margin-top: 0.5rem; min-height: 5rem; }
+  .cart-drawer__subtotal {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: var(--text-md);
+    font-weight: 500;
+  }
+  .cart-drawer__subtotal [data-cart-subtotal] { font-variant-numeric: tabular-nums; }
+  .cart-drawer__taxnote { font-size: var(--text-xs); color: rgb(var(--color-foreground) / 0.55); }
+  .cart-drawer__viewcart { text-align: center; font-size: var(--text-sm); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,30 @@
+{%- comment -%}
+  Product status badges (sale / sold out). Outputs only the badge spans so the
+  caller controls positioning. Real Shopify data.
+
+  Accepts:
+    product - (product) required
+    variant - (variant)  optional; when given, sale state reflects this variant
+{%- endcomment -%}
+{%- liquid
+  if variant != blank
+    assign available = variant.available
+    assign compare = variant.compare_at_price
+    assign price = variant.price
+  else
+    assign available = product.available
+    assign compare = product.compare_at_price
+    assign price = product.price
+  endif
+  assign on_sale = false
+  if compare != blank and compare > price
+    assign on_sale = true
+  endif
+-%}
+{%- unless available -%}
+  <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+{%- else -%}
+  {%- if on_sale -%}
+    <span class="badge badge--sale">{{ 'products.product.on_sale' | t }}</span>
+  {%- endif -%}
+{%- endunless -%}

@@ -1,0 +1,104 @@
+{%- comment -%}
+  Main 404 — a calm, strongly typographic "not found" page. Uses the translated
+  general.404.* strings, offers a way back home and an optional search field.
+  An open-portal arch keeps it on-brand (the threshold leads nowhere — yet).
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="notfound section color-{{ s.color_scheme }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width page-width--narrow">
+    <div class="notfound__inner" data-animate="threshold">
+      {%- if s.show_frame -%}
+        <span class="notfound__frame" aria-hidden="true">
+          <svg viewBox="0 0 300 200" fill="none" stroke="currentColor" stroke-width="1.4" preserveAspectRatio="xMidYMax meet">
+            <path d="M8 200V92a142 142 0 0 1 284 0v108"/>
+          </svg>
+        </span>
+      {%- endif -%}
+
+      <div class="notfound__content">
+        <p class="notfound__code eyebrow">404</p>
+        <h1 class="notfound__title display">{{ 'general.404.title' | t }}</h1>
+        <p class="notfound__text">{{ 'general.404.subtext' | t }}</p>
+
+        {%- if s.show_search -%}
+          <form action="{{ routes.search_url }}" method="get" role="search" class="notfound__search">
+            <input type="hidden" name="type" value="product,article,page">
+            <label class="visually-hidden" for="NotFoundSearch">{{ 'search.title' | t }}</label>
+            <span class="notfound__search-icon">{%- render 'icon', name: 'search', class: 'icon--sm' -%}</span>
+            <input type="search" id="NotFoundSearch" name="q" placeholder="{{ 'search.placeholder' | t }}" autocomplete="off">
+            <button type="submit" class="button button--solid button--small">{{ 'search.submit' | t }}</button>
+          </form>
+        {%- endif -%}
+
+        <a href="{{ routes.root_url }}" class="link-arrow notfound__home">{{ 'general.404.link' | t }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .notfound { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .notfound__inner { position: relative; display: flex; justify-content: center; padding-block: var(--space-xl); }
+  .notfound__frame {
+    position: absolute;
+    bottom: -1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90%, 34rem);
+    color: rgb(var(--color-accent) / 0.3);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .notfound__frame svg { width: 100%; height: auto; }
+  .notfound__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-md);
+    max-width: 36rem;
+  }
+  .notfound__code { color: rgb(var(--color-accent)); }
+  .notfound__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); line-height: 1.0; max-width: 16ch; }
+  .notfound__text { font-size: var(--text-lg); color: rgb(var(--color-foreground) / 0.78); max-width: 44ch; }
+  .notfound__search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: min(100%, 26rem);
+    margin-top: var(--space-xs);
+    padding: 0.35rem 0.35rem 0.35rem 0.9rem;
+    border: 1.5px solid rgb(var(--color-foreground));
+    border-radius: 999px;
+  }
+  .notfound__search-icon { color: rgb(var(--color-foreground) / 0.5); display: inline-flex; }
+  .notfound__search input[type="search"] { flex: 1 1 auto; min-height: 2.25rem; border: none; background: transparent; padding: 0; }
+  .notfound__search input[type="search"]:focus { box-shadow: none; outline: none; }
+  .notfound__search .button { flex: none; border-radius: 999px; }
+  .notfound__home { margin-top: var(--space-xs); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "404 page",
+  "tag": "section",
+  "class": "main-404-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-warm-white"
+    },
+    { "type": "checkbox", "id": "show_frame", "label": "Show portal arch", "default": true },
+    { "type": "checkbox", "id": "show_search", "label": "Show search field", "default": true },
+    { "type": "checkbox", "id": "show_texture", "label": "Add paper texture", "default": false }
+  ],
+  "presets": [{ "name": "404 page" }]
+}
+{% endschema %}

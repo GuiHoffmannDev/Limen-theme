@@ -1,0 +1,80 @@
+{%- comment -%}
+  Editorial article card — a real Shopify article presented like a magazine
+  contents entry: image, date, optional tag/author, serif title, short excerpt.
+  Shared by main-blog and main-article (related). Mirrors the journal-grid look.
+
+  Accepts:
+    article      - (article) required
+    show_image   - (bool)    default: true
+    show_date    - (bool)    default: true
+    show_tag     - (bool)    default: true
+    show_excerpt - (bool)    default: true
+    show_author  - (bool)    default: false
+    loading      - (string)  'lazy' (default) | 'eager'
+    sizes        - (string)  image sizes attr
+    index        - (number)  1-based position, for animation stagger
+{%- endcomment -%}
+{%- liquid
+  assign with_image = show_image
+  if show_image == nil
+    assign with_image = true
+  endif
+  assign with_date = show_date
+  if show_date == nil
+    assign with_date = true
+  endif
+  assign with_tag = show_tag
+  if show_tag == nil
+    assign with_tag = true
+  endif
+  assign with_excerpt = show_excerpt
+  if show_excerpt == nil
+    assign with_excerpt = true
+  endif
+  assign card_loading = loading | default: 'lazy'
+  assign card_sizes = sizes | default: '(min-width: 990px) 32vw, (min-width: 750px) 45vw, 90vw'
+  assign delay = 0
+  if index != blank
+    assign delay = index | minus: 1 | times: 70
+  endif
+-%}
+<article
+  class="article-card"
+  data-animate="{{ settings.animation_reveal_style }}"
+  {% if delay > 0 %}style="--animate-delay: {{ delay }}ms;"{% endif %}
+>
+  {%- if with_image -%}
+    <a class="article-card__media" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
+      {%- if article.image -%}
+        {%- render 'responsive-image',
+          image: article.image,
+          sizes: card_sizes,
+          widths: '300, 500, 700, 900, 1100',
+          loading: card_loading,
+          crop: 'center',
+          alt: article.image.alt
+        -%}
+      {%- else -%}
+        <div class="placeholder-svg" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+      {%- endif -%}
+    </a>
+  {%- endif -%}
+  <div class="article-card__info">
+    <div class="article-card__meta">
+      {%- if with_date -%}
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%b %d, %Y' }}</time>
+      {%- endif -%}
+      {%- if with_tag and article.tags.size > 0 -%}
+        <span class="article-card__tag">{{ article.tags.first }}</span>
+      {%- endif -%}
+    </div>
+    <h3 class="article-card__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+    {%- if with_excerpt -%}
+      {%- assign card_excerpt = article.excerpt | default: article.content | strip_html | truncatewords: 24 -%}
+      {%- if card_excerpt != blank -%}<p class="article-card__excerpt">{{ card_excerpt }}</p>{%- endif -%}
+    {%- endif -%}
+    {%- if show_author and article.author != blank -%}
+      <p class="article-card__author">{{ 'blog.by_author' | t: author: article.author }}</p>
+    {%- endif -%}
+  </div>
+</article>

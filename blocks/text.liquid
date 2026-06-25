@@ -1,0 +1,93 @@
+{%- comment -%}
+  Theme block: Text. A reorderable editorial text element (optional eyebrow +
+  heading + rich-text body) for main-page and any section that opts into theme
+  blocks via {% content_for 'blocks' %}. All copy is editable in the editor.
+{%- endcomment -%}
+{%- liquid
+  assign b = block.settings
+  assign width_class = 'block-text--' | append: b.width
+  assign align_class = 'block-text--' | append: b.alignment
+-%}
+<div class="block-text {{ width_class }} {{ align_class }}" {{ block.shopify_attributes }}>
+  {%- if b.eyebrow != blank -%}
+    <p class="block-text__eyebrow eyebrow">{{ b.eyebrow | escape }}</p>
+  {%- endif -%}
+  {%- if b.heading != blank -%}
+    <{{ b.heading_tag }} class="block-text__heading {{ b.heading_size }}">
+      {{- b.heading | escape -}}
+      {%- if b.heading_emphasis != blank %} <em>{{ b.heading_emphasis | escape }}</em>{% endif -%}
+    </{{ b.heading_tag }}>
+  {%- endif -%}
+  {%- if b.content != blank -%}
+    <div class="block-text__body rte{% if b.lead %} block-text__body--lead{% endif %}">{{ b.content }}</div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .block-text { display: flex; flex-direction: column; gap: var(--space-sm); max-width: var(--measure); }
+  .block-text--narrow { max-width: var(--measure-narrow); }
+  .block-text--wide { max-width: none; }
+  .block-text--center { align-items: center; text-align: center; margin-inline: auto; }
+  .block-text__eyebrow { color: rgb(var(--color-accent)); }
+  .block-text__body { color: rgb(var(--color-foreground) / 0.82); }
+  .block-text__body--lead { font-size: var(--text-lg); line-height: var(--leading-relaxed); color: rgb(var(--color-foreground)); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Text",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "heading_emphasis", "label": "Heading emphasis (italic accent)" },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag (SEO)",
+      "info": "Use one h1 per page; h2/h3 below it.",
+      "options": [
+        { "value": "h2", "label": "h2" },
+        { "value": "h3", "label": "h3" },
+        { "value": "p", "label": "Paragraph (no heading)" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        { "value": "h3", "label": "Small" },
+        { "value": "h2", "label": "Medium" },
+        { "value": "h1", "label": "Large" },
+        { "value": "display", "label": "Display" }
+      ],
+      "default": "h2"
+    },
+    { "type": "richtext", "id": "content", "label": "Text", "default": "<p>Use this space to tell the story behind LIMEN — the meaning of the name, the people, the process.</p>" },
+    { "type": "checkbox", "id": "lead", "label": "Larger lead paragraph", "default": false },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "Width",
+      "options": [
+        { "value": "narrow", "label": "Narrow" },
+        { "value": "normal", "label": "Normal" },
+        { "value": "wide", "label": "Wide" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" }
+      ],
+      "default": "start"
+    }
+  ],
+  "presets": [{ "name": "Text" }]
+}
+{% endschema %}

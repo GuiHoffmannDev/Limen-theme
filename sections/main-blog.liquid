@@ -1,0 +1,217 @@
+{%- comment -%}
+  Main blog (Journal) — real Shopify articles from blog.articles, laid out like
+  a magazine: optional large featured lead, a topic (tag) filter built from
+  blog.all_tags, an editorial grid of article cards and native pagination.
+  Magazine aesthetic, not a generic blog. Reuses the article-card snippet.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign anchor = '#MainBlog-' | append: section.id
+  assign is_unfiltered_first = false
+  if current_tags == empty
+    assign is_unfiltered_first = true
+  endif
+-%}
+
+<section id="MainBlog-{{ section.id }}" class="blog-section section color-{{ s.color_scheme }}">
+  <div class="page-width page-width--wide">
+    {%- render 'breadcrumbs' -%}
+
+    <header class="blog-head" data-animate="fade-up">
+      <div class="section-header section-header--wide">
+        {%- if s.eyebrow != blank -%}<p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        <h1 class="blog-head__title">{{ blog.title }}</h1>
+        {%- if s.intro != blank -%}<p class="section-header__intro">{{ s.intro | escape }}</p>{%- endif -%}
+      </div>
+
+      {%- if s.show_tags and blog.all_tags.size > 0 -%}
+        <nav class="blog-filter" aria-label="{{ 'blog.filter_label' | t }}">
+          <a href="{{ blog.url }}" class="blog-filter__tag{% if current_tags == empty %} is-active{% endif %}"{% if current_tags == empty %} aria-current="true"{% endif %}>{{ 'blog.all_topics' | t }}</a>
+          {%- for tag in blog.all_tags -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}" class="blog-filter__tag{% if current_tags contains tag %} is-active{% endif %}"{% if current_tags contains tag %} aria-current="true"{% endif %}>{{ tag }}</a>
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+    </header>
+
+    {%- paginate blog.articles by s.posts_per_page -%}
+      {%- liquid
+        assign show_featured = false
+        if s.featured_first and is_unfiltered_first and paginate.current_page == 1 and blog.articles.size > 0
+          assign show_featured = true
+        endif
+      -%}
+
+      {%- if blog.articles.size > 0 -%}
+        {%- if show_featured -%}
+          {%- assign lead = blog.articles.first -%}
+          <a class="blog-featured" href="{{ lead.url }}" data-animate="fade-up">
+            <div class="blog-featured__media">
+              {%- if lead.image -%}
+                {%- render 'responsive-image', image: lead.image, sizes: '(min-width: 990px) 60vw, 100vw', widths: '500, 800, 1100, 1400, 1800', loading: 'eager', fetchpriority: 'high', crop: 'center', alt: lead.image.alt -%}
+              {%- else -%}
+                <div class="placeholder-svg" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}</div>
+              {%- endif -%}
+            </div>
+            <div class="blog-featured__info">
+              <div class="blog-featured__meta">
+                <time datetime="{{ lead.published_at | date: '%Y-%m-%d' }}">{{ lead.published_at | date: '%b %d, %Y' }}</time>
+                {%- if lead.tags.size > 0 -%}<span class="blog-featured__tag">{{ lead.tags.first }}</span>{%- endif -%}
+              </div>
+              <h2 class="blog-featured__title">{{ lead.title }}</h2>
+              {%- assign lead_excerpt = lead.excerpt | default: lead.content | strip_html | truncatewords: 36 -%}
+              {%- if lead_excerpt != blank -%}<p class="blog-featured__excerpt">{{ lead_excerpt }}</p>{%- endif -%}
+              <span class="link-arrow">{{ 'blog.read_more' | t }}</span>
+            </div>
+          </a>
+        {%- endif -%}
+
+        <div class="blog-grid editorial-grid editorial-grid--{{ s.columns }}">
+          {%- for article in blog.articles -%}
+            {%- if show_featured and forloop.first -%}{%- continue -%}{%- endif -%}
+            {%- render 'article-card',
+              article: article,
+              show_excerpt: s.show_excerpt,
+              show_author: s.show_author,
+              sizes: '(min-width: 990px) 32vw, (min-width: 750px) 45vw, 90vw',
+              index: forloop.index
+            -%}
+          {%- endfor -%}
+        </div>
+
+        {%- render 'pagination', paginate: paginate, anchor: anchor -%}
+      {%- elsif request.design_mode -%}
+        <div class="blog-grid editorial-grid editorial-grid--{{ s.columns }}">
+          {%- for i in (1..3) -%}
+            <article class="article-card">
+              <div class="article-card__media"><div class="placeholder-svg" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}</div></div>
+              <div class="article-card__info">
+                <div class="article-card__meta"><time>{{ 'now' | date: '%b %d, %Y' }}</time></div>
+                <h3 class="article-card__title">{{ 'onboarding.article_title' | t }}</h3>
+              </div>
+            </article>
+          {%- endfor -%}
+        </div>
+        <p class="blog-empty">{{ 'onboarding.blog_prompt' | t }}</p>
+      {%- else -%}
+        <div class="empty-state">
+          <p class="empty-state__title">{{ 'blog.empty' | t }}</p>
+          <a href="{{ routes.root_url }}" class="button button--outline">{{ 'general.404.link' | t }}</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .blog-section { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .blog-head { display: flex; flex-direction: column; gap: var(--space-md); margin-bottom: var(--space-xl); }
+  .blog-head__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); }
+
+  .blog-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .blog-filter__tag {
+    padding: 0.4rem 0.9rem;
+    font-size: var(--text-sm);
+    border: var(--hairline);
+    border-radius: 999px;
+    transition: color var(--duration-fast) ease, border-color var(--duration-fast) ease, background-color var(--duration-fast) ease;
+  }
+  .blog-filter__tag:hover { border-color: rgb(var(--color-accent)); color: rgb(var(--color-accent)); }
+  .blog-filter__tag.is-active { background: rgb(var(--color-foreground)); color: rgb(var(--color-background)); border-color: rgb(var(--color-foreground)); }
+
+  .blog-featured {
+    display: grid;
+    gap: clamp(1.25rem, 0.5rem + 3vw, 3rem);
+    align-items: center;
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: var(--hairline);
+  }
+  @media (min-width: 750px) { .blog-featured { grid-template-columns: 1.4fr 1fr; } }
+  .blog-featured__media { overflow: hidden; border-radius: var(--border-radius, 2px); aspect-ratio: 4 / 3; background: rgb(var(--color-foreground) / 0.04); }
+  .blog-featured__media img,
+  .blog-featured__media .placeholder-svg { width: 100%; height: 100%; object-fit: cover; transition: transform var(--duration-slow) var(--ease-threshold); }
+  .blog-featured:hover .blog-featured__media img { transform: scale(1.03); }
+  .blog-featured__info { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .blog-featured__meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; color: rgb(var(--color-foreground) / 0.55); }
+  .blog-featured__tag { color: rgb(var(--color-accent)); }
+  .blog-featured__title { font-size: calc(var(--text-2xl) * var(--heading-scale, 1)); line-height: 1.08; }
+  .blog-featured:hover .blog-featured__title { color: rgb(var(--color-accent)); }
+  .blog-featured__excerpt { font-size: var(--text-md); line-height: var(--leading-relaxed); color: rgb(var(--color-foreground) / 0.72); max-width: 52ch; }
+
+  .blog-empty { margin-top: var(--space-md); font-size: var(--text-sm); color: rgb(var(--color-foreground) / 0.55); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "tag": "section",
+  "class": "main-blog-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Journal"
+    },
+    {
+      "type": "text",
+      "id": "intro",
+      "label": "Intro",
+      "default": "Notes on objects, materials and thoughtful interaction."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "featured_first",
+      "label": "Feature the latest article",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Show topic filter",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "columns",
+      "label": "Columns (desktop)",
+      "options": [
+        { "value": "2", "label": "2" },
+        { "value": "3", "label": "3" }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "min": 4,
+      "max": 24,
+      "step": 1,
+      "label": "Articles per page",
+      "default": 9
+    },
+    {
+      "type": "header",
+      "content": "Article details"
+    },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Show excerpt", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": false }
+  ],
+  "presets": [{ "name": "Blog posts" }]
+}
+{% endschema %}

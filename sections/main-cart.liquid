@@ -1,0 +1,218 @@
+{%- comment -%}
+  Main cart — the cart page. Server-rendered and fully functional without JS
+  (native cart form: update quantities, remove via links, checkout). cart-drawer.js
+  layers AJAX line-item updates (aria-live, no reload) on top via the shared
+  <cart-items> element and the cart-item snippet. Native Shopify checkout —
+  never redesigned. Real cart data only.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+
+<section class="cart-page section color-{{ s.color_scheme }}" data-section-id="{{ section.id }}">
+  <div class="page-width">
+    <header class="cart-page__head">
+      <h1 class="cart-page__title">{{ 'cart.title' | t }}</h1>
+      {%- if cart.item_count > 0 -%}
+        <a href="{{ routes.all_products_collection_url }}" class="link-arrow cart-page__continue">{{ 'cart.continue' | t }}</a>
+      {%- endif -%}
+    </header>
+
+    <cart-items class="cart-page__root" data-cart-root data-section-id="{{ section.id }}">
+      <div class="cart-page__contents" data-cart-contents data-item-count="{{ cart.item_count }}">
+        {%- if cart.item_count == 0 -%}
+          <div class="empty-state cart-page__empty">
+            <p class="empty-state__title">{{ 'cart.empty' | t }}</p>
+            <a href="{{ routes.all_products_collection_url }}" class="button button--solid">{{ 'cart.empty_continue' | t }}</a>
+          </div>
+        {%- else -%}
+          {%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+            {%- assign threshold = settings.cart_free_shipping_threshold | times: 100 -%}
+            {%- assign remaining = threshold | minus: cart.total_price -%}
+            <div class="cart-page__shipping" data-free-shipping>
+              {%- if remaining > 0 -%}
+                {%- assign remaining_money = remaining | money -%}
+                <p>{{ 'cart.free_shipping_progress' | t: amount: remaining_money }}</p>
+                {%- assign progress = cart.total_price | times: 100 | divided_by: threshold -%}
+              {%- else -%}
+                <p>{{ 'cart.free_shipping_reached' | t }}</p>
+                {%- assign progress = 100 -%}
+              {%- endif -%}
+              <div class="cart-page__shipping-bar" role="presentation"><span style="width: {{ progress }}%;"></span></div>
+            </div>
+          {%- endif -%}
+
+          <div class="cart-page__grid">
+            <form action="{{ routes.cart_url }}" method="post" id="cart-page-form" class="cart-page__form">
+              <div class="cart-page__headings" aria-hidden="true">
+                <span>{{ 'cart.product' | t }}</span>
+                <span>{{ 'cart.quantity' | t }}</span>
+                <span class="cart-page__headings-total">{{ 'cart.total' | t }}</span>
+              </div>
+              <ul class="cart-page__items" role="list">
+                {%- for item in cart.items -%}
+                  {%- render 'cart-item', item: item, context: 'page', form: 'cart-page-form' -%}
+                {%- endfor -%}
+              </ul>
+              <noscript>
+                <button type="submit" name="update" class="button button--outline button--small">{{ 'cart.update' | t }}</button>
+              </noscript>
+            </form>
+
+            <aside class="cart-page__summary">
+              {%- if settings.cart_show_note -%}
+                <details class="cart-page__note">
+                  <summary>{{ 'cart.note' | t }}</summary>
+                  <label class="visually-hidden" for="CartNote">{{ 'cart.note' | t }}</label>
+                  <textarea id="CartNote" name="note" form="cart-page-form" placeholder="{{ 'cart.note_placeholder' | t }}">{{ cart.note }}</textarea>
+                </details>
+              {%- endif -%}
+
+              {%- if cart.cart_level_discount_applications.size > 0 -%}
+                <ul class="cart-page__discounts" role="list">
+                  {%- for discount in cart.cart_level_discount_applications -%}
+                    <li class="cart-page__discount">
+                      {%- render 'icon', name: 'check', class: 'icon--sm' -%}
+                      {{ discount.title }} (−{{ discount.total_allocated_amount | money }})
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+
+              <div class="cart-page__subtotal">
+                <span>{{ 'cart.subtotal' | t }}</span>
+                <span data-cart-subtotal>{{ cart.total_price | money_with_currency }}</span>
+              </div>
+              <p class="cart-page__taxnote">{{ 'cart.taxes_and_shipping' | t }}</p>
+
+              <button type="submit" name="checkout" form="cart-page-form" class="button button--solid button--full button--large">
+                {{ 'cart.checkout' | t }}
+              </button>
+            </aside>
+          </div>
+        {%- endif -%}
+      </div>
+    </cart-items>
+  </div>
+
+  {%- if s.show_recommendations and s.recommendation_collection != blank and s.recommendation_collection.products.size > 0 -%}
+    <div class="cart-page__recommendations page-width page-width--wide">
+      <div class="section-header"><h2 class="section-header__title">{{ s.recommendation_heading | escape }}</h2></div>
+      <div class="editorial-grid editorial-grid--4">
+        {%- for product in s.recommendation_collection.products limit: s.recommendation_count -%}
+          {%- render 'product-card', product: product, index: forloop.index, sizes: '(min-width: 990px) 22vw, (min-width: 750px) 33vw, 50vw' -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+<script src="{{ 'cart-drawer.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .cart-page { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .cart-page__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--hairline);
+  }
+  .cart-page__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); }
+
+  .cart-page__shipping { margin-bottom: var(--space-lg); font-size: var(--text-sm); max-width: 32rem; }
+  .cart-page__shipping-bar { margin-top: 0.5rem; height: 3px; background: rgb(var(--color-foreground) / 0.12); border-radius: 999px; overflow: hidden; }
+  .cart-page__shipping-bar span { display: block; height: 100%; background: rgb(var(--color-accent)); transition: width var(--duration-slow) var(--ease-threshold); }
+
+  .cart-page__grid { display: grid; gap: clamp(2rem, 1rem + 4vw, 4rem); align-items: start; }
+  @media (min-width: 990px) { .cart-page__grid { grid-template-columns: 1.7fr 1fr; } }
+
+  .cart-page__headings {
+    display: none;
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgb(var(--color-foreground) / 0.5);
+    padding-bottom: 0.75rem;
+    border-bottom: var(--hairline);
+  }
+  @media (min-width: 750px) {
+    .cart-page__headings { display: grid; grid-template-columns: 120px 1fr auto; gap: var(--space-md); }
+    .cart-page__headings span:nth-child(2) { grid-column: 2; }
+    .cart-page__headings-total { text-align: right; }
+  }
+
+  .cart-page__summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    border: var(--hairline);
+    border-radius: var(--border-radius, 2px);
+  }
+  @media (min-width: 990px) { .cart-page__summary { position: sticky; top: 6rem; } }
+  .cart-page__note summary { font-size: var(--text-sm); cursor: pointer; padding-block: 0.4rem; color: rgb(var(--color-foreground) / 0.7); }
+  .cart-page__note textarea { margin-top: 0.5rem; }
+  .cart-page__discounts { font-size: var(--text-sm); }
+  .cart-page__discount { display: flex; align-items: center; gap: 0.4rem; color: rgb(var(--color-accent)); }
+  .cart-page__subtotal { display: flex; align-items: baseline; justify-content: space-between; font-size: var(--text-lg); font-weight: 500; }
+  .cart-page__subtotal [data-cart-subtotal] { font-variant-numeric: tabular-nums; }
+  .cart-page__taxnote { font-size: var(--text-xs); color: rgb(var(--color-foreground) / 0.55); }
+  .cart-page__empty { padding-block: var(--space-2xl); display: flex; flex-direction: column; align-items: center; gap: var(--space-md); }
+  .cart-page__recommendations { margin-top: var(--space-2xl); }
+  .cart-page__recommendations .section-header { margin-bottom: var(--space-lg); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Cart",
+  "tag": "section",
+  "class": "main-cart-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "header",
+      "content": "Recommendations"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_recommendations",
+      "label": "Show a recommended collection",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "recommendation_heading",
+      "label": "Heading",
+      "default": "Objects that earn their place"
+    },
+    {
+      "type": "collection",
+      "id": "recommendation_collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "recommendation_count",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "label": "Products to show",
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart"
+    }
+  ]
+}
+{% endschema %}

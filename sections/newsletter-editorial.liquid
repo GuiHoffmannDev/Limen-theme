@@ -1,0 +1,154 @@
+{%- comment -%}
+  Newsletter editorial — native Shopify customer form (tagged "newsletter").
+  Accessible label, clear consent, success and error states. Campaign copy is
+  editable; functional strings come from locales.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign uid = section.id | replace: '-', '' | downcase
+  assign form_id = 'Newsletter-' | append: uid
+-%}
+
+<section class="newsletter section color-{{ s.color_scheme }} newsletter--{{ s.layout }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width{% if s.layout == 'center' %} page-width--narrow{% endif %}">
+    <div class="newsletter__inner" data-animate="{{ settings.animation_reveal_style }}">
+      <div class="newsletter__intro">
+        {%- if s.show_symbol -%}
+          <span class="newsletter__mark" aria-hidden="true">
+            <svg viewBox="0 0 48 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 63V25a19 19 0 0 1 38 0v38"/><path d="M16 63V27a8 8 0 0 1 16 0v36"/><path d="M5 63h38"/>
+            </svg>
+          </span>
+        {%- endif -%}
+        {%- if s.eyebrow != blank -%}<p class="section-header__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="newsletter__heading">{{ s.heading | escape }}</h2>{%- endif -%}
+        {%- if s.body != blank -%}<p class="newsletter__body">{{ s.body | escape }}</p>{%- endif -%}
+      </div>
+
+      <div class="newsletter__form-wrap">
+        {%- form 'customer', id: form_id, class: 'newsletter__form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="form__message form__message--success" role="status">
+              {%- render 'icon', name: 'check', class: 'icon--sm' -%} {{ 'newsletter.success' | t }}
+            </p>
+          {%- else -%}
+            <label class="visually-hidden" for="Newsletter-email-{{ uid }}">{{ 'newsletter.label' | t }}</label>
+            <div class="newsletter__field">
+              <input
+                type="email"
+                id="Newsletter-email-{{ uid }}"
+                name="contact[email]"
+                value="{{ form.email }}"
+                placeholder="{{ 'newsletter.placeholder' | t }}"
+                autocomplete="email"
+                required
+                {% if form.errors %}aria-invalid="true" aria-describedby="Newsletter-error-{{ uid }}"{% endif %}
+              >
+              <button type="submit" class="button button--solid">{{ 'newsletter.button' | t }}</button>
+            </div>
+            {%- if form.errors -%}
+              <p class="form__message form__message--error" id="Newsletter-error-{{ uid }}" role="alert">
+                {{ 'newsletter.error' | t }}
+              </p>
+            {%- endif -%}
+            <p class="newsletter__consent">{{ 'newsletter.consent' | t }}</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .newsletter { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .newsletter__inner { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .newsletter__mark { color: rgb(var(--color-accent)); }
+  .newsletter__mark svg { width: 1.6rem; height: auto; }
+  .newsletter__intro { display: flex; flex-direction: column; gap: var(--space-sm); }
+  .newsletter__heading { font-size: calc(var(--text-2xl) * var(--heading-scale, 1)); }
+  .newsletter__body { font-size: var(--text-md); color: rgb(var(--color-foreground) / 0.78); max-width: 48ch; }
+  .newsletter__field { display: flex; flex-wrap: wrap; gap: 0.6rem; max-width: 30rem; }
+  .newsletter__field input { flex: 1 1 14rem; }
+  .newsletter__consent { margin-top: 0.75rem; font-size: var(--text-xs); color: rgb(var(--color-foreground) / 0.55); max-width: 42ch; }
+
+  .newsletter--center .newsletter__inner { align-items: center; text-align: center; }
+  .newsletter--center .newsletter__intro { align-items: center; }
+  .newsletter--center .section-header__eyebrow::before { display: none; }
+  .newsletter--center .newsletter__field { margin-inline: auto; }
+  .newsletter--center .newsletter__consent { margin-inline: auto; }
+
+  @media (min-width: 750px) {
+    .newsletter--split .newsletter__inner { flex-direction: row; align-items: center; justify-content: space-between; gap: var(--space-2xl); }
+    .newsletter--split .newsletter__intro { flex: 1 1 28rem; }
+    .newsletter--split .newsletter__form-wrap { flex: 1 1 24rem; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Newsletter editorial",
+  "tag": "section",
+  "class": "newsletter-section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-warm-beige"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        { "value": "center", "label": "Centered" },
+        { "value": "split", "label": "Split (text + form)" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_symbol",
+      "label": "Show portal mark",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Newsletter"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Notes from the threshold."
+    },
+    {
+      "type": "text",
+      "id": "body",
+      "label": "Description",
+      "default": "Occasional notes on objects, materials, technology and thoughtful interaction."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter editorial",
+      "settings": {
+        "color_scheme": "scheme-warm-beige"
+      }
+    }
+  ]
+}
+{% endschema %}

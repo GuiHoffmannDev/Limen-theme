@@ -1,0 +1,73 @@
+{%- comment -%}
+  Country/region or language selector backed by Shopify's native localization
+  form. Works without JS (each option is a submit button); header.js adds
+  close-on-Escape / close-on-outside-click polish to the <details> disclosure.
+
+  Accepts:
+    type - (string) 'country' (default) or 'language'
+    id   - (string) unique form id, e.g. 'header-country'
+{%- endcomment -%}
+{%- liquid
+  assign sel_type = type | default: 'country'
+  assign form_id = id | default: 'localization'
+-%}
+
+{%- if sel_type == 'language' -%}
+  {%- if localization.available_languages.size > 1 -%}
+    {%- form 'localization', id: form_id, class: 'localization-form' -%}
+      <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}">
+      <details class="disclosure" data-disclosure>
+        <summary class="disclosure__toggle" aria-label="{{ 'localization.language_label' | t }}">
+          <span>{{ localization.language.endonym_name | capitalize }}</span>
+          {%- render 'icon', name: 'caret', class: 'icon--sm' -%}
+        </summary>
+        <div class="disclosure__panel">
+          <ul class="disclosure__list" role="list">
+            {%- for language in localization.available_languages -%}
+              <li>
+                <button
+                  type="submit"
+                  name="locale_code"
+                  value="{{ language.iso_code }}"
+                  class="disclosure__option"
+                  {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %}
+                >
+                  {{ language.endonym_name | capitalize }}
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </details>
+    {%- endform -%}
+  {%- endif -%}
+{%- else -%}
+  {%- if localization.available_countries.size > 1 -%}
+    {%- form 'localization', id: form_id, class: 'localization-form' -%}
+      <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
+      <details class="disclosure" data-disclosure>
+        <summary class="disclosure__toggle" aria-label="{{ 'localization.country_label' | t }}">
+          <span>{{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})</span>
+          {%- render 'icon', name: 'caret', class: 'icon--sm' -%}
+        </summary>
+        <div class="disclosure__panel disclosure__panel--scroll">
+          <ul class="disclosure__list" role="list">
+            {%- for country in localization.available_countries -%}
+              <li>
+                <button
+                  type="submit"
+                  name="country_code"
+                  value="{{ country.iso_code }}"
+                  class="disclosure__option"
+                  {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %}
+                >
+                  {{ country.name }} <span class="disclosure__option-meta">{{ country.currency.iso_code }} {{ country.currency.symbol }}</span>
+                </button>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      </details>
+    {%- endform -%}
+  {%- endif -%}
+{%- endif -%}

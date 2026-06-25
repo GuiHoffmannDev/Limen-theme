@@ -1,0 +1,41 @@
+{%- comment -%}
+  Brand logo. Renders the uploaded logo (with inverse variant for dark/transparent
+  contexts) or, when none is set, the default LIMEN wordmark: a portal glyph
+  (the "limiar" motif, currentColor) + the LIMEN logotype. Caller wraps it in
+  the home link.
+
+  Accepts:
+    inverse - (bool)   prefer the inverse logo / lighter treatment
+    width   - (number) desktop render width in px (default 120)
+    class   - (string) extra classes
+{%- endcomment -%}
+{%- liquid
+  assign logo_width = width | default: 120
+  if inverse and settings.logo_inverse != blank
+    assign logo_image = settings.logo_inverse
+  else
+    assign logo_image = settings.logo
+  endif
+  assign logo_width_2x = logo_width | times: 2
+-%}
+
+{%- if logo_image != blank -%}
+  <img
+    src="{{ logo_image | image_url: width: logo_width_2x }}"
+    width="{{ logo_image.width }}"
+    height="{{ logo_image.height }}"
+    alt="{{ logo_image.alt | default: shop.name | escape }}"
+    class="brand-logo__image {{ class }}"
+    style="width: {{ logo_width }}px;"
+    loading="eager"
+  >
+{%- else -%}
+  <span class="brand-logo brand-logo--default {{ class }}">
+    <svg class="brand-logo__glyph" viewBox="0 0 26 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 33V14a10 10 0 0 1 20 0v19"/>
+      <path d="M9 33V15.5a4 4 0 0 1 8 0V33"/>
+      <path d="M3 33h20"/>
+    </svg>
+    <span class="brand-logo__type">LIMEN</span>
+  </span>
+{%- endif -%}

@@ -1,0 +1,56 @@
+{%- comment -%}
+  Responsive, CLS-safe image. Uses Shopify image_tag (auto width/height + srcset).
+
+  Accepts:
+    image        - (image object, required) the Shopify image
+    sizes        - (string)  CSS sizes attribute. Default: 100vw
+    widths       - (string)  srcset widths. Default: a broad ramp
+    loading      - (string)  'lazy' (default) or 'eager'
+    fetchpriority- (string)  'auto' (default), 'high', 'low'
+    class        - (string)  extra classes
+    alt          - (string)  alt override (falls back to image.alt)
+    crop         - (string)  optional crop (e.g. 'center')
+    max          - (number)  largest rendered width. Default 1800
+{%- endcomment -%}
+
+{%- liquid
+  assign img = image
+  assign img_sizes = sizes | default: '100vw'
+  assign img_widths = widths | default: '200, 300, 400, 500, 600, 750, 900, 1100, 1300, 1500, 1800'
+  assign img_loading = loading | default: 'lazy'
+  assign img_priority = fetchpriority | default: 'auto'
+  assign img_max = max | default: 1800
+  assign img_alt = alt | default: image.alt | escape
+-%}
+
+{%- if img != blank -%}
+  {%- if crop != blank -%}
+    {{
+      img
+      | image_url: width: img_max, crop: crop
+      | image_tag:
+        loading: img_loading,
+        fetchpriority: img_priority,
+        sizes: img_sizes,
+        widths: img_widths,
+        class: class,
+        alt: img_alt
+    }}
+  {%- else -%}
+    {{
+      img
+      | image_url: width: img_max
+      | image_tag:
+        loading: img_loading,
+        fetchpriority: img_priority,
+        sizes: img_sizes,
+        widths: img_widths,
+        class: class,
+        alt: img_alt
+    }}
+  {%- endif -%}
+{%- else -%}
+  <div class="placeholder-svg {{ class }}" aria-hidden="true">
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg__image' }}
+  </div>
+{%- endif -%}

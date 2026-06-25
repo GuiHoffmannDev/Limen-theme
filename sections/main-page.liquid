@@ -1,0 +1,103 @@
+{%- comment -%}
+  Main page — the default editorial page template. Renders the real Shopify page
+  title and rich-text content at a comfortable reading width, with breadcrumbs.
+  Below the content, merchants can compose reorderable theme blocks (text,
+  button, image, accordion item) through {% content_for 'blocks' %}.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign width_class = 'page-width--narrow'
+  if s.content_width == 'wide'
+    assign width_class = ''
+  endif
+-%}
+
+<section class="page-section section color-{{ s.color_scheme }}{% if s.show_texture %} has-texture{% endif %}">
+  <div class="page-width {{ width_class }}">
+    {%- render 'breadcrumbs' -%}
+
+    {%- if s.show_title and page.title != blank -%}
+      <header class="page-section__head{% if s.center_title %} page-section__head--center{% endif %}" data-animate="fade-up">
+        {%- if s.eyebrow != blank -%}<p class="page-section__eyebrow eyebrow">{{ s.eyebrow | escape }}</p>{%- endif -%}
+        <h1 class="page-section__title">{{ page.title }}</h1>
+      </header>
+    {%- endif -%}
+
+    {%- if page.content != blank -%}
+      <div class="page-section__content rte" data-animate="fade-up">
+        {{ page.content }}
+      </div>
+    {%- elsif request.design_mode and page.title == blank -%}
+      <div class="page-section__content rte">
+        <p>{{ 'onboarding.page_prompt' | t }}</p>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Reorderable theme blocks (added in the Theme Editor) {%- endcomment -%}
+    <div class="page-section__blocks flow">
+      {% content_for 'blocks' %}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .page-section { background-color: rgb(var(--color-background)); color: rgb(var(--color-foreground)); }
+  .page-section__head { margin-bottom: var(--space-lg); }
+  .page-section__head--center { text-align: center; }
+  .page-section__eyebrow { color: rgb(var(--color-accent)); margin-bottom: var(--space-xs); }
+  .page-section__title { font-size: calc(var(--text-3xl) * var(--heading-scale, 1)); }
+  .page-section__content { font-size: var(--text-md); }
+  .page-section__blocks { margin-top: var(--space-xl); --flow-space: var(--space-lg); }
+  .page-section__blocks:empty { margin-top: 0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page",
+  "tag": "section",
+  "class": "main-page-section",
+  "blocks": [{ "type": "@theme" }],
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-ivory"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show page title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "center_title",
+      "label": "Center page title",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow (optional)"
+    },
+    {
+      "type": "select",
+      "id": "content_width",
+      "label": "Content width",
+      "options": [
+        { "value": "narrow", "label": "Narrow (reading width)" },
+        { "value": "wide", "label": "Wide" }
+      ],
+      "default": "narrow"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_texture",
+      "label": "Add paper texture",
+      "default": false
+    }
+  ],
+  "presets": [{ "name": "Page" }]
+}
+{% endschema %}

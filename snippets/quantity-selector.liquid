@@ -1,0 +1,56 @@
+{%- comment -%}
+  Quantity selector — wraps the .quantity component in a <quantity-input>
+  custom element (theme.js handles +/- and validation). Works without JS.
+
+  Accepts:
+    id          - (string)  input id (required for the label association)
+    name        - (string)  input name (default: 'quantity')
+    value       - (number)  initial value (default: 1)
+    min         - (number)  minimum (default: 1)
+    max         - (number)  optional maximum (inventory cap)
+    form        - (string)  optional <form> id to associate the input with
+    key         - (string)  optional cart line key (data-quantity-key)
+    aria_suffix - (string)  appended to the quantity aria-label (e.g. product title)
+    class       - (string)  extra classes on the wrapper
+{%- endcomment -%}
+{%- liquid
+  assign qty_name = name | default: 'quantity'
+  assign qty_value = value | default: 1
+  assign qty_min = min | default: 1
+  assign qty_aria = 'products.product.quantity' | t
+  if aria_suffix != blank
+    assign qty_aria = qty_aria | append: ' — ' | append: aria_suffix
+  endif
+-%}
+<quantity-input class="quantity {{ class }}">
+  <button
+    type="button"
+    name="minus"
+    class="quantity__button"
+    aria-label="{{ 'products.product.decrease_quantity' | t }}"
+  >
+    {%- render 'icon', name: 'minus', class: 'icon--sm' -%}
+  </button>
+  <input
+    {% if id != blank %}id="{{ id }}"{% endif %}
+    class="quantity__input"
+    type="number"
+    name="{{ qty_name }}"
+    value="{{ qty_value }}"
+    min="{{ qty_min }}"
+    {% if max != blank %}max="{{ max }}"{% endif %}
+    {% if form != blank %}form="{{ form }}"{% endif %}
+    {% if key != blank %}data-quantity-key="{{ key }}"{% endif %}
+    inputmode="numeric"
+    autocomplete="off"
+    aria-label="{{ qty_aria | escape }}"
+  >
+  <button
+    type="button"
+    name="plus"
+    class="quantity__button"
+    aria-label="{{ 'products.product.increase_quantity' | t }}"
+  >
+    {%- render 'icon', name: 'plus', class: 'icon--sm' -%}
+  </button>
+</quantity-input>

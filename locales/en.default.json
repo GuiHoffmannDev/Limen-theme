@@ -1,0 +1,254 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "404": {
+      "title": "The threshold leads nowhere",
+      "subtext": "This page can't be found. The page may have moved, or the link may be incomplete.",
+      "link": "Return home"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{ number }}"
+    },
+    "breadcrumbs": {
+      "home": "Home",
+      "aria_label": "Breadcrumb"
+    },
+    "social": {
+      "label": "Social media",
+      "follow": "Follow us on {{ name }}",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "x": "X",
+      "pinterest": "Pinterest"
+    },
+    "share": {
+      "label": "Share",
+      "copied": "Link copied",
+      "copy": "Copy link"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close": "Close",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "menu": "Menu",
+    "cart": "Cart",
+    "search": "Search",
+    "account": "Account",
+    "loading": "Loading",
+    "previous": "Previous",
+    "next": "Next",
+    "star_reviews": "{{ rating }} out of {{ scale }} stars",
+    "selection_help": "Use the arrow keys to choose an option.",
+    "error": "Error",
+    "refresh_page": "Choosing a selection results in a full page refresh.",
+    "link_messages": {
+      "new_window": "Opens in a new window.",
+      "external": "Opens external website."
+    }
+  },
+  "localization": {
+    "country_label": "Country/region",
+    "language_label": "Language"
+  },
+  "onboarding": {
+    "collection_prompt": "Select a collection in the Theme Editor to feature its products here.",
+    "product_prompt": "Select a product in the Theme Editor to feature it here.",
+    "blog_prompt": "Select a blog in the Theme Editor to show its latest articles here.",
+    "page_prompt": "Add content to this page in the Shopify admin, or compose it with blocks in the Theme Editor.",
+    "button_prompt": "Add a label and link for this button.",
+    "product_title": "Example product",
+    "article_title": "An article from the journal"
+  },
+  "newsletter": {
+    "label": "Email",
+    "placeholder": "your@email.com",
+    "button": "Subscribe",
+    "success": "Thanks — you're on the list.",
+    "consent": "By subscribing you agree to receive occasional notes from LIMEN.",
+    "error": "Please enter a valid email address."
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "added": "Added",
+      "adding": "Adding…",
+      "sold_out": "Sold out",
+      "unavailable": "Unavailable",
+      "on_sale": "Sale",
+      "from_price": "From {{ price }}",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "unit_price": "Unit price",
+      "quantity": "Quantity",
+      "increase_quantity": "Increase quantity",
+      "decrease_quantity": "Decrease quantity",
+      "sku": "SKU",
+      "vendor": "Vendor",
+      "view_full_details": "View full details",
+      "choose_options": "Choose options",
+      "variant_sold_out": "{{ option }} — sold out",
+      "variant_unavailable": "{{ option }} — unavailable",
+      "inventory_in_stock": "In stock",
+      "inventory_low": "Low stock — {{ quantity }} left",
+      "inventory_out": "Out of stock",
+      "include_taxes": "Taxes included.",
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "media_gallery_label": "Product media",
+      "media_zoom": "Zoom image",
+      "pickup_available": "Pickup available",
+      "pickup_unavailable": "Pickup currently unavailable",
+      "related_title": "You may also like"
+    },
+    "facets": {
+      "filter_and_sort": "Filter and sort",
+      "filter_by_label": "Filter",
+      "sort_by_label": "Sort by",
+      "apply": "Apply",
+      "clear": "Clear",
+      "clear_all": "Clear all",
+      "from": "From",
+      "to": "To",
+      "filter_button": "Filter",
+      "product_count": {
+        "one": "{{ count }} of {{ total }} product",
+        "other": "{{ count }} of {{ total }} products"
+      },
+      "product_count_simple": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      },
+      "active_filters": "Active filters"
+    }
+  },
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty.",
+    "empty_continue": "Continue shopping",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping": "Taxes and shipping calculated at checkout.",
+    "checkout": "Checkout",
+    "update": "Update",
+    "remove": "Remove",
+    "note": "Order note",
+    "note_placeholder": "Add a note to your order",
+    "quantity": "Quantity",
+    "free_shipping_progress": "You're {{ amount }} away from free shipping.",
+    "free_shipping_reached": "You've unlocked free shipping.",
+    "item_added": "Item added to your cart",
+    "updated": "Cart updated",
+    "removed": "Item removed",
+    "generic_error": "Something went wrong. Please try again.",
+    "view_cart": "View cart",
+    "continue": "Continue shopping",
+    "discount": "Discount",
+    "product": "Product",
+    "total": "Total",
+    "each": "each"
+  },
+  "collection": {
+    "empty": "No products here yet.",
+    "empty_filtered": "No products match these filters.",
+    "view_all": "View all products"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search products, journal, pages",
+    "submit": "Search",
+    "reset": "Clear",
+    "results_for": "Results for \"{{ terms }}\"",
+    "no_results": "No results for \"{{ terms }}\". Try another search.",
+    "results_count": {
+      "one": "{{ count }} result",
+      "other": "{{ count }} results"
+    },
+    "predictive": {
+      "products": "Products",
+      "articles": "Journal",
+      "pages": "Pages",
+      "queries": "Suggestions",
+      "view_all": "View all results for \"{{ terms }}\""
+    }
+  },
+  "blog": {
+    "title": "Journal",
+    "read_more": "Read article",
+    "all_articles": "All articles",
+    "by_author": "By {{ author }}",
+    "tags": "Topics",
+    "related": "More from the Journal",
+    "back_to_blog": "Back to {{ title }}",
+    "filter_label": "Filter by topic",
+    "all_topics": "All",
+    "empty": "No articles here yet."
+  },
+  "article": {
+    "share": "Share this article",
+    "posted_in": "Posted in",
+    "read_time": "{{ minutes }} min read",
+    "comments": {
+      "title": "Leave a comment",
+      "count": {
+        "one": "{{ count }} comment",
+        "other": "{{ count }} comments"
+      },
+      "name": "Name",
+      "email": "Email",
+      "body": "Comment",
+      "submit": "Post comment",
+      "moderated": "Comments are reviewed before they are published.",
+      "success": "Your comment was posted.",
+      "success_moderated": "Thanks — your comment will appear once it has been reviewed.",
+      "error": "Please review the form and try again."
+    }
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "message": "Message",
+    "send": "Send message",
+    "success": "Thanks for reaching out — we'll reply soon.",
+    "error": "Something went wrong. Please review the form and try again."
+  },
+  "customer": {
+    "account": "Account",
+    "log_in": "Log in",
+    "log_out": "Log out",
+    "register": "Create account"
+  },
+  "password": {
+    "login_password_label": "Password",
+    "login_password_placeholder": "Enter store password",
+    "login_submit": "Enter",
+    "error": "Wrong password — please try again.",
+    "store_owner": "Are you the store owner?",
+    "login_here": "Log in here"
+  },
+  "templates": {
+    "search": {
+      "search_for": "Search for",
+      "no_results": "No results found."
+    }
+  },
+  "sections": {
+    "header": {
+      "announcement": "Announcement",
+      "menu": "Menu",
+      "submenu_toggle": "Show submenu for {{ title }}"
+    },
+    "footer": {
+      "policies": "Policies",
+      "payment_methods": "Payment methods"
+    }
+  }
+}

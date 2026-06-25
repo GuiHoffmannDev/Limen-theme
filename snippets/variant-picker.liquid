@@ -1,0 +1,142 @@
+{%- comment -%}
+  Variant picker — accessible option inputs inside a <variant-radios> custom
+  element (product.js). Each option is a radio group (rendered as pills); the
+  selected combination resolves to a variant client-side. Works without JS via
+  the <noscript> native <select> fallback, which posts the variant id directly.
+
+  product.js, on change, updates the price / inventory / SKU regions (Section
+  Rendering API), the gallery, the URL and the add button, and publishes
+  variantChange. Pricing/availability stay driven by real Liquid data.
+
+  Accepts:
+    product   - (product) required
+    section   - (string)  section.id (for Section Rendering + unique ids)
+    form_id   - (string)  the product form id (the hidden id input lives there)
+    update_url- (bool)    update the address bar on change (default: true)
+{%- endcomment -%}
+{%- liquid
+  assign update_url_value = update_url
+  if update_url == nil
+    assign update_url_value = true
+  endif
+  assign current_variant = product.selected_or_first_available_variant
+
+  assign variant_media_pairs = ''
+  for variant in product.variants
+    if variant.featured_media
+      assign pair = variant.id | append: ':' | append: variant.featured_media.id
+      assign variant_media_pairs = variant_media_pairs | append: pair | append: ','
+    endif
+  endfor
+-%}
+<variant-radios
+  class="variant-picker"
+  data-section="{{ section }}"
+  data-url="{{ product.url }}"
+  data-form="{{ form_id }}"
+  data-update-url="{{ update_url_value }}"
+>
+  {%- for option in product.options_with_values -%}
+    {%- liquid
+      assign option_index = forloop.index
+    -%}
+    <fieldset class="variant-picker__option" data-option-index="{{ option_index }}">
+      <legend class="variant-picker__legend">
+        <span class="variant-picker__name">{{ option.name }}</span>
+        <span class="variant-picker__selected" data-selected-value="{{ option_index }}">{{ option.selected_value }}</span>
+      </legend>
+      <div class="variant-picker__values">
+        {%- for value in option.values -%}
+          {%- liquid
+            assign input_id = 'opt-' | append: section | append: '-' | append: option_index | append: '-' | append: forloop.index
+            assign is_checked = false
+            if option.selected_value == value
+              assign is_checked = true
+            endif
+          -%}
+          <input
+            type="radio"
+            class="variant-picker__input visually-hidden"
+            id="{{ input_id }}"
+            name="option-{{ section }}-{{ option_index }}"
+            value="{{ value | escape }}"
+            data-option-index="{{ option_index }}"
+            {% if is_checked %}checked{% endif %}
+          >
+          <label class="variant-picker__value" for="{{ input_id }}">{{ value }}</label>
+        {%- endfor -%}
+      </div>
+    </fieldset>
+  {%- endfor -%}
+
+  <script type="application/json" data-variant-data>
+    {{ product.variants | json }}
+  </script>
+  <script type="application/json" data-variant-media>{{ variant_media_pairs | split: ',' | json }}</script>
+
+  <noscript>
+    <div class="field variant-picker__noscript">
+      <label class="field__label" for="VariantSelect-{{ section }}">{{ 'products.product.choose_options' | t }}</label>
+      <div class="select">
+        <select id="VariantSelect-{{ section }}" name="id" form="{{ form_id }}">
+          {%- for variant in product.variants -%}
+            <option
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}selected{% endif %}
+              {% unless variant.available %}disabled{% endunless %}
+            >
+              {{ variant.title }}{% unless variant.available %} — {{ 'products.product.sold_out' | t }}{% endunless %}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    </div>
+  </noscript>
+</variant-radios>
+
+{% stylesheet %}
+  .variant-picker { display: flex; flex-direction: column; gap: var(--space-md); }
+  .variant-picker__option { border: none; margin: 0; padding: 0; min-inline-size: 0; }
+  .variant-picker__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    align-items: baseline;
+    padding: 0;
+    margin-bottom: 0.6rem;
+    font-size: var(--text-sm);
+  }
+  .variant-picker__name { font-weight: 500; }
+  .variant-picker__selected { color: rgb(var(--color-foreground) / 0.6); }
+  .variant-picker__values { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .variant-picker__value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.625rem;
+    padding: 0.5rem 1.05rem;
+    font-size: var(--text-sm);
+    line-height: 1;
+    border: 1px solid rgb(var(--color-border) / 0.32);
+    border-radius: var(--button-radius, 2px);
+    cursor: pointer;
+    transition: border-color var(--duration-fast) ease, color var(--duration-fast) ease, background-color var(--duration-fast) ease;
+  }
+  .variant-picker__value:hover { border-color: rgb(var(--color-foreground) / 0.55); }
+  .variant-picker__input:checked + .variant-picker__value {
+    border-color: rgb(var(--color-foreground));
+    background: rgb(var(--color-foreground));
+    color: rgb(var(--color-background));
+  }
+  .variant-picker__input:focus-visible + .variant-picker__value {
+    outline: 2px solid rgb(var(--color-accent));
+    outline-offset: 2px;
+  }
+  /* Combination unavailable with the current selection */
+  .variant-picker__value.is-unavailable {
+    color: rgb(var(--color-foreground) / 0.4);
+    text-decoration: line-through;
+    border-style: dashed;
+  }
+  .variant-picker__noscript { max-width: 18rem; }
+{% endstylesheet %}

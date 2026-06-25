@@ -1,0 +1,254 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Marcado com \"{{ tags }}\"",
+      "page": "Página {{ page }}"
+    },
+    "404": {
+      "title": "O limiar não leva a lugar algum",
+      "subtext": "Esta página não foi encontrada. Ela pode ter sido movida ou o link pode estar incompleto.",
+      "link": "Voltar ao início"
+    },
+    "pagination": {
+      "label": "Paginação",
+      "previous": "Anterior",
+      "next": "Próxima",
+      "page": "Página {{ number }}"
+    },
+    "breadcrumbs": {
+      "home": "Início",
+      "aria_label": "Trilha de navegação"
+    },
+    "social": {
+      "label": "Redes sociais",
+      "follow": "Siga a LIMEN no {{ name }}",
+      "instagram": "Instagram",
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "x": "X",
+      "pinterest": "Pinterest"
+    },
+    "share": {
+      "label": "Compartilhar",
+      "copied": "Link copiado",
+      "copy": "Copiar link"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Pular para o conteúdo",
+    "close": "Fechar",
+    "open_menu": "Abrir menu",
+    "close_menu": "Fechar menu",
+    "menu": "Menu",
+    "cart": "Carrinho",
+    "search": "Pesquisar",
+    "account": "Conta",
+    "loading": "Carregando",
+    "previous": "Anterior",
+    "next": "Próximo",
+    "star_reviews": "{{ rating }} de {{ scale }} estrelas",
+    "selection_help": "Use as setas para escolher uma opção.",
+    "error": "Erro",
+    "refresh_page": "Selecionar uma opção recarrega a página inteira.",
+    "link_messages": {
+      "new_window": "Abre em uma nova janela.",
+      "external": "Abre um site externo."
+    }
+  },
+  "localization": {
+    "country_label": "País/região",
+    "language_label": "Idioma"
+  },
+  "onboarding": {
+    "collection_prompt": "Selecione uma coleção no editor de tema para destacar seus produtos aqui.",
+    "product_prompt": "Selecione um produto no editor de tema para destacá-lo aqui.",
+    "blog_prompt": "Selecione um blog no editor de tema para mostrar os artigos mais recentes aqui.",
+    "page_prompt": "Adicione conteúdo a esta página no admin da Shopify ou monte-a com blocos no editor de tema.",
+    "button_prompt": "Adicione um rótulo e um link para este botão.",
+    "product_title": "Produto de exemplo",
+    "article_title": "Um artigo do journal"
+  },
+  "newsletter": {
+    "label": "E-mail",
+    "placeholder": "seu@email.com",
+    "button": "Inscrever-se",
+    "success": "Obrigado — você está na lista.",
+    "consent": "Ao se inscrever, você concorda em receber notas ocasionais da LIMEN.",
+    "error": "Insira um endereço de e-mail válido."
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Adicionar ao carrinho",
+      "added": "Adicionado",
+      "adding": "Adicionando…",
+      "sold_out": "Esgotado",
+      "unavailable": "Indisponível",
+      "on_sale": "Promoção",
+      "from_price": "A partir de {{ price }}",
+      "regular_price": "Preço normal",
+      "sale_price": "Preço promocional",
+      "unit_price": "Preço unitário",
+      "quantity": "Quantidade",
+      "increase_quantity": "Aumentar quantidade",
+      "decrease_quantity": "Diminuir quantidade",
+      "sku": "SKU",
+      "vendor": "Marca",
+      "view_full_details": "Ver todos os detalhes",
+      "choose_options": "Escolher opções",
+      "variant_sold_out": "{{ option }} — esgotado",
+      "variant_unavailable": "{{ option }} — indisponível",
+      "inventory_in_stock": "Em estoque",
+      "inventory_low": "Estoque baixo — {{ quantity }} restantes",
+      "inventory_out": "Sem estoque",
+      "include_taxes": "Impostos incluídos.",
+      "shipping_policy_html": "<a href=\"{{ link }}\">Frete</a> calculado no checkout.",
+      "media_gallery_label": "Mídia do produto",
+      "media_zoom": "Ampliar imagem",
+      "pickup_available": "Retirada disponível",
+      "pickup_unavailable": "Retirada indisponível no momento",
+      "related_title": "Você também pode gostar"
+    },
+    "facets": {
+      "filter_and_sort": "Filtrar e ordenar",
+      "filter_by_label": "Filtrar",
+      "sort_by_label": "Ordenar por",
+      "apply": "Aplicar",
+      "clear": "Limpar",
+      "clear_all": "Limpar tudo",
+      "from": "De",
+      "to": "Até",
+      "filter_button": "Filtrar",
+      "product_count": {
+        "one": "{{ count }} de {{ total }} produto",
+        "other": "{{ count }} de {{ total }} produtos"
+      },
+      "product_count_simple": {
+        "one": "{{ count }} produto",
+        "other": "{{ count }} produtos"
+      },
+      "active_filters": "Filtros ativos"
+    }
+  },
+  "cart": {
+    "title": "Carrinho",
+    "empty": "Seu carrinho está vazio.",
+    "empty_continue": "Continuar comprando",
+    "subtotal": "Subtotal",
+    "taxes_and_shipping": "Impostos e frete calculados no checkout.",
+    "checkout": "Finalizar compra",
+    "update": "Atualizar",
+    "remove": "Remover",
+    "note": "Observação do pedido",
+    "note_placeholder": "Adicione uma observação ao pedido",
+    "quantity": "Quantidade",
+    "free_shipping_progress": "Faltam {{ amount }} para o frete grátis.",
+    "free_shipping_reached": "Você desbloqueou o frete grátis.",
+    "item_added": "Item adicionado ao carrinho",
+    "updated": "Carrinho atualizado",
+    "removed": "Item removido",
+    "generic_error": "Algo deu errado. Tente novamente.",
+    "view_cart": "Ver carrinho",
+    "continue": "Continuar comprando",
+    "discount": "Desconto",
+    "product": "Produto",
+    "total": "Total",
+    "each": "cada"
+  },
+  "collection": {
+    "empty": "Nenhum produto aqui ainda.",
+    "empty_filtered": "Nenhum produto corresponde a esses filtros.",
+    "view_all": "Ver todos os produtos"
+  },
+  "search": {
+    "title": "Pesquisa",
+    "placeholder": "Busque produtos, journal, páginas",
+    "submit": "Pesquisar",
+    "reset": "Limpar",
+    "results_for": "Resultados para \"{{ terms }}\"",
+    "no_results": "Nenhum resultado para \"{{ terms }}\". Tente outra busca.",
+    "results_count": {
+      "one": "{{ count }} resultado",
+      "other": "{{ count }} resultados"
+    },
+    "predictive": {
+      "products": "Produtos",
+      "articles": "Journal",
+      "pages": "Páginas",
+      "queries": "Sugestões",
+      "view_all": "Ver todos os resultados para \"{{ terms }}\""
+    }
+  },
+  "blog": {
+    "title": "Journal",
+    "read_more": "Ler artigo",
+    "all_articles": "Todos os artigos",
+    "by_author": "Por {{ author }}",
+    "tags": "Tópicos",
+    "related": "Mais do Journal",
+    "back_to_blog": "Voltar para {{ title }}",
+    "filter_label": "Filtrar por tópico",
+    "all_topics": "Todos",
+    "empty": "Nenhum artigo aqui ainda."
+  },
+  "article": {
+    "share": "Compartilhar este artigo",
+    "posted_in": "Publicado em",
+    "read_time": "{{ minutes }} min de leitura",
+    "comments": {
+      "title": "Deixe um comentário",
+      "count": {
+        "one": "{{ count }} comentário",
+        "other": "{{ count }} comentários"
+      },
+      "name": "Nome",
+      "email": "E-mail",
+      "body": "Comentário",
+      "submit": "Publicar comentário",
+      "moderated": "Os comentários são revisados antes de serem publicados.",
+      "success": "Seu comentário foi publicado.",
+      "success_moderated": "Obrigado — seu comentário aparecerá após a revisão.",
+      "error": "Revise o formulário e tente novamente."
+    }
+  },
+  "contact": {
+    "name": "Nome",
+    "email": "E-mail",
+    "phone": "Telefone (opcional)",
+    "message": "Mensagem",
+    "send": "Enviar mensagem",
+    "success": "Obrigado pelo contato — responderemos em breve.",
+    "error": "Algo deu errado. Revise o formulário e tente novamente."
+  },
+  "customer": {
+    "account": "Conta",
+    "log_in": "Entrar",
+    "log_out": "Sair",
+    "register": "Criar conta"
+  },
+  "password": {
+    "login_password_label": "Senha",
+    "login_password_placeholder": "Digite a senha da loja",
+    "login_submit": "Entrar",
+    "error": "Senha incorreta — tente novamente.",
+    "store_owner": "É o dono da loja?",
+    "login_here": "Entre aqui"
+  },
+  "templates": {
+    "search": {
+      "search_for": "Buscar por",
+      "no_results": "Nenhum resultado encontrado."
+    }
+  },
+  "sections": {
+    "header": {
+      "announcement": "Aviso",
+      "menu": "Menu",
+      "submenu_toggle": "Mostrar submenu de {{ title }}"
+    },
+    "footer": {
+      "policies": "Políticas",
+      "payment_methods": "Formas de pagamento"
+    }
+  }
+}
