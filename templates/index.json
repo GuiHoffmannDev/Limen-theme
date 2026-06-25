@@ -3,7 +3,7 @@
     "hero": {
       "type": "hero-editorial",
       "settings": {
-        "color_scheme": "scheme-dark"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "manifesto": {
@@ -23,7 +23,7 @@
       },
       "block_order": ["p1", "p2", "p3", "p4", "p5"],
       "settings": {
-        "color_scheme": "scheme-ivory",
+        "color_scheme": "scheme-warm-white",
         "layout": "list"
       }
     },
@@ -38,21 +38,21 @@
     "image_text": {
       "type": "image-text-editorial",
       "settings": {
-        "color_scheme": "scheme-ivory",
+        "color_scheme": "scheme-warm-white",
         "image_position": "left"
       }
     },
     "story": {
       "type": "editorial-story",
       "settings": {
-        "color_scheme": "scheme-warm-beige",
+        "color_scheme": "scheme-warm-white",
         "layout": "entry"
       }
     },
     "featured_product": {
       "type": "featured-product-editorial",
       "settings": {
-        "color_scheme": "scheme-ivory"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "craft": {
@@ -78,13 +78,13 @@
       },
       "block_order": ["i1", "i2", "i3", "i4"],
       "settings": {
-        "color_scheme": "scheme-ivory"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "marquee": {
       "type": "text-marquee",
       "settings": {
-        "color_scheme": "scheme-terracotta",
+        "color_scheme": "scheme-warm-white",
         "text": "Cross the threshold",
         "font": "serif"
       }
@@ -92,13 +92,13 @@
     "quote": {
       "type": "quote-editorial",
       "settings": {
-        "color_scheme": "scheme-sage"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "journal": {
       "type": "journal-grid",
       "settings": {
-        "color_scheme": "scheme-ivory",
+        "color_scheme": "scheme-warm-white",
         "columns": "3",
         "articles_to_show": 3
       }
@@ -106,14 +106,14 @@
     "newsletter": {
       "type": "newsletter-editorial",
       "settings": {
-        "color_scheme": "scheme-warm-beige",
+        "color_scheme": "scheme-warm-white",
         "layout": "center"
       }
     },
     "final_cta": {
       "type": "final-threshold-cta",
       "settings": {
-        "color_scheme": "scheme-dark"
+        "color_scheme": "scheme-warm-white"
       }
     }
   },

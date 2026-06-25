@@ -20,7 +20,7 @@
       },
       "block_order": ["announcement-1", "announcement-2"],
       "settings": {
-        "color_scheme": "scheme-dark"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "header": {
@@ -28,9 +28,9 @@
       "settings": {
         "menu": "main-menu",
         "logo_position": "left",
-        "color_scheme": "scheme-dark",
+        "color_scheme": "scheme-warm-white",
         "sticky": true,
-        "transparent_on_index": true,
+        "transparent_on_index": false,
         "show_search": true,
         "show_account": true,
         "show_country_selector": false,

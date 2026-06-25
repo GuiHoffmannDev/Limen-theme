@@ -29,7 +29,7 @@
       },
       "block_order": ["menu-explore", "text-contact", "newsletter"],
       "settings": {
-        "color_scheme": "scheme-dark",
+        "color_scheme": "scheme-warm-white",
         "tagline": "<p>Objects designed to make the relationship between people and technology more natural, thoughtful and tangible.</p>",
         "show_social": true,
         "show_payment_icons": true,
@@ -41,13 +41,13 @@
     "cart-drawer": {
       "type": "cart-drawer",
       "settings": {
-        "color_scheme": "scheme-ivory"
+        "color_scheme": "scheme-warm-white"
       }
     },
     "predictive-search": {
       "type": "predictive-search",
       "settings": {
-        "color_scheme": "scheme-ivory"
+        "color_scheme": "scheme-warm-white"
       }
     }
   },
