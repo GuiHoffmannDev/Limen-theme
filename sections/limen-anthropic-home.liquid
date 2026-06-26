@@ -8,6 +8,18 @@
   if customer
     assign track_order_url = routes.account_url
   endif
+  assign hero_underlined_2_words = s.hero_underlined_2 | split: ' '
+  assign hero_underlined_2_first_word = hero_underlined_2_words.first
+  capture hero_underlined_2_rest
+    for word in hero_underlined_2_words
+      unless forloop.first
+        echo word
+        unless forloop.last
+          echo ' '
+        endunless
+      endunless
+    endfor
+  endcapture
 -%}
 
 <section class="limen-anthropic color-{{ s.color_scheme }}">
@@ -25,10 +37,17 @@
 
   <div class="page-width page-width--wide limen-anthropic__hero">
     <h1 class="limen-anthropic__hero-title" data-animate="{{ settings.animation_reveal_style }}">
-      {{ s.hero_line_1 | escape }}
-      <span>{{ s.hero_underlined_1 | escape }}</span>
-      {{ s.hero_line_2 | escape }}
-      <span>{{ s.hero_underlined_2 | escape }}</span>
+      <span class="limen-anthropic__hero-title-line">
+        {{ s.hero_line_1 | escape }} <span>{{ s.hero_underlined_1 | escape }}</span>
+      </span>
+      <span class="limen-anthropic__hero-title-line">
+        {{ s.hero_line_2 | escape }} <span>{{ hero_underlined_2_first_word | escape }}</span>
+      </span>
+      {%- if hero_underlined_2_rest != blank -%}
+        <span class="limen-anthropic__hero-title-line">
+          {{ hero_underlined_2_rest | strip | escape }}
+        </span>
+      {%- endif -%}
     </h1>
 
     <div class="limen-anthropic__hero-copy" data-animate="fade-up" style="--animate-delay: 120ms;">
@@ -193,16 +212,19 @@
   }
 
   .limen-anthropic__hero-title {
-    max-width: 11.2ch;
+    max-width: 18ch;
     font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
-    font-size: clamp(3.05rem, 1.15rem + 4.3vw, 5.55rem);
+    font-size: clamp(2.85rem, 1.05rem + 3.85vw, 5rem);
     font-weight: 600;
     line-height: 0.94;
     letter-spacing: 0;
-    text-wrap: balance;
   }
 
-  .limen-anthropic__hero-title span {
+  .limen-anthropic__hero-title-line {
+    display: block;
+  }
+
+  .limen-anthropic__hero-title-line > span {
     text-decoration: underline;
     text-decoration-thickness: 0.06em;
     text-underline-offset: 0.1em;
@@ -448,8 +470,8 @@
     }
 
     .limen-anthropic__hero-title {
-      max-width: 10ch;
-      font-size: clamp(2.8rem, 9vw, 4.8rem);
+      max-width: 18ch;
+      font-size: clamp(2.65rem, 8vw, 4.3rem);
     }
 
     .limen-anthropic__hero-copy {
@@ -497,8 +519,8 @@
     }
 
     .limen-anthropic__hero-title {
-      max-width: 9.5ch;
-      font-size: clamp(2.3rem, 10.5vw, 3.55rem);
+      max-width: 100%;
+      font-size: clamp(2.1rem, 9vw, 3.05rem);
       line-height: 0.98;
     }
 
