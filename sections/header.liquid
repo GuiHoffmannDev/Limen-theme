@@ -18,6 +18,10 @@
   if section.settings.show_country_selector or section.settings.show_language_selector
     assign show_localization = true
   endif
+  assign track_order_url = routes.account_login_url
+  if customer
+    assign track_order_url = routes.account_url
+  endif
 -%}
 
 <limen-header
@@ -46,9 +50,25 @@
     </a>
 
     {%- comment -%} Desktop primary navigation {%- endcomment -%}
-    {%- if menu != blank and menu.links.size > 0 -%}
-      <nav class="header__nav" aria-label="{{ 'sections.header.menu' | t }}">
-        <ul class="header__menu" role="list">
+    <nav class="header__nav" aria-label="{{ 'sections.header.menu' | t }}">
+      <ul class="header__menu" role="list">
+        <li class="header__menu-item">
+          <a href="{{ routes.root_url }}" class="header__menu-link"{% if request.page_type == 'index' %} aria-current="page"{% endif %}>
+            Home
+          </a>
+        </li>
+        <li class="header__menu-item">
+          <a href="{{ routes.all_products_collection_url }}" class="header__menu-link"{% if request.page_type == 'collection' %} aria-current="page"{% endif %}>
+            Products
+          </a>
+        </li>
+        <li class="header__menu-item">
+          <a href="{{ track_order_url }}" class="header__menu-link">
+            Track order
+          </a>
+        </li>
+
+        {%- if menu != blank and menu.links.size > 0 -%}
           {%- for link in menu.links -%}
             <li class="header__menu-item{% if link.links.size > 0 %} has-dropdown{% endif %}">
               <a
@@ -78,9 +98,9 @@
               {%- endif -%}
             </li>
           {%- endfor -%}
-        </ul>
-      </nav>
-    {%- endif -%}
+        {%- endif -%}
+      </ul>
+    </nav>
 
     {%- comment -%} Actions {%- endcomment -%}
     <div class="header__actions">
@@ -161,9 +181,19 @@
       </div>
 
       <div class="drawer__body">
-        {%- if menu != blank and menu.links.size > 0 -%}
-          <nav class="mobile-menu__nav" aria-label="{{ 'sections.header.menu' | t }}">
-            <ul class="mobile-menu__list" role="list">
+        <nav class="mobile-menu__nav" aria-label="{{ 'sections.header.menu' | t }}">
+          <ul class="mobile-menu__list" role="list">
+            <li class="mobile-menu__item">
+              <a href="{{ routes.root_url }}" class="mobile-menu__link"{% if request.page_type == 'index' %} aria-current="page"{% endif %}>Home</a>
+            </li>
+            <li class="mobile-menu__item">
+              <a href="{{ routes.all_products_collection_url }}" class="mobile-menu__link"{% if request.page_type == 'collection' %} aria-current="page"{% endif %}>Products</a>
+            </li>
+            <li class="mobile-menu__item">
+              <a href="{{ track_order_url }}" class="mobile-menu__link">Track order</a>
+            </li>
+
+            {%- if menu != blank and menu.links.size > 0 -%}
               {%- for link in menu.links -%}
                 <li class="mobile-menu__item">
                   {%- if link.links.size > 0 -%}
@@ -192,9 +222,9 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
-            </ul>
-          </nav>
-        {%- endif -%}
+            {%- endif -%}
+          </ul>
+        </nav>
 
         <div class="mobile-menu__footer">
           {%- if section.settings.show_account and shop.customer_accounts_enabled -%}
