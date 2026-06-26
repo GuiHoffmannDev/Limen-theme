@@ -1,136 +1,64 @@
 {
   "sections": {
-    "hero": {
-      "type": "hero-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white"
-      }
-    },
-    "manifesto": {
-      "type": "manifesto-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white"
-      }
-    },
-    "principles": {
-      "type": "brand-principles",
+    "limen_anthropic_home": {
+      "type": "limen-anthropic-home",
       "blocks": {
-        "p1": { "type": "principle", "settings": { "title": "Human by design", "body": "Shaped around people first — the technology follows." } },
-        "p2": { "type": "principle", "settings": { "title": "Less interface, more interaction", "body": "Fewer screens and menus. More direct, tactile contact." } },
-        "p3": { "type": "principle", "settings": { "title": "Built for touch", "body": "Materials and forms made to be held, not just used." } },
-        "p4": { "type": "principle", "settings": { "title": "Calm technology", "body": "Present when needed, quiet the rest of the time." } },
-        "p5": { "type": "principle", "settings": { "title": "Made to remain useful", "body": "Objects that earn their place and keep it for years." } }
+        "release_keyboard": {
+          "type": "release",
+          "settings": {
+            "title": "Limen Keyboard",
+            "body": "A low-profile keyboard for long writing sessions, precise shortcuts and calm desk setups.",
+            "meta_label_1": "Status",
+            "meta_value_1": "Coming soon",
+            "meta_label_2": "Category",
+            "meta_value_2": "Input devices",
+            "button_label": "Explore product"
+          }
+        },
+        "release_arm_wrist": {
+          "type": "release",
+          "settings": {
+            "title": "Arm Wrist",
+            "body": "A weighted wrist support shaped to keep hands relaxed through repeated work.",
+            "meta_label_1": "Status",
+            "meta_value_1": "Prototype",
+            "meta_label_2": "Category",
+            "meta_value_2": "Ergonomics",
+            "button_label": "Explore product"
+          }
+        },
+        "release_module": {
+          "type": "release",
+          "settings": {
+            "title": "Control Module",
+            "body": "A small aluminum controller for audio, macros and the transitions of a focused day.",
+            "meta_label_1": "Status",
+            "meta_value_1": "In development",
+            "meta_label_2": "Category",
+            "meta_value_2": "Desktop tools",
+            "button_label": "Explore product"
+          }
+        },
+        "row_keyboard": { "type": "index_row", "settings": { "title": "The keyboard as a threshold for focused work", "category": "Product notes" } },
+        "row_materials": { "type": "index_row", "settings": { "title": "Materials, repairability and the calm desktop", "category": "Craft" } },
+        "row_principles": { "type": "index_row", "settings": { "title": "Designing objects that disappear into use", "category": "Principles" } },
+        "row_system": { "type": "index_row", "settings": { "title": "A product system for keyboard, wrist and control", "category": "Announcements" } }
       },
-      "block_order": ["p1", "p2", "p3", "p4", "p5"],
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "layout": "list"
-      }
-    },
-    "featured_collection": {
-      "type": "featured-collection-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "columns": "4",
-        "products_to_show": 4
-      }
-    },
-    "image_text": {
-      "type": "image-text-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "image_position": "left"
-      }
-    },
-    "story": {
-      "type": "editorial-story",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "layout": "entry"
-      }
-    },
-    "featured_product": {
-      "type": "featured-product-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white"
-      }
-    },
-    "craft": {
-      "type": "material-craft",
-      "blocks": {
-        "c1": { "type": "step", "settings": { "label": "Material", "title": "Anodised aluminium", "note": "Machined from a single billet, bead-blasted and anodised for a warm, matte hand-feel." } },
-        "c2": { "type": "step", "settings": { "label": "Process", "title": "Hand-finished", "note": "Each edge is chamfered and checked by hand before assembly." } },
-        "c3": { "type": "note", "settings": { "title": "Assembled to last", "note": "<p>Held together with screws, not glue — so it can be opened, repaired and kept in use.</p>" } }
-      },
-      "block_order": ["c1", "c2", "c3"],
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "columns": "2"
-      }
-    },
-    "collage": {
-      "type": "image-collage",
-      "blocks": {
-        "i1": { "type": "image", "settings": { "width": "twothirds" } },
-        "i2": { "type": "image", "settings": { "width": "third", "shift": true } },
-        "i3": { "type": "image", "settings": { "width": "third" } },
-        "i4": { "type": "image", "settings": { "width": "half", "shift": true } }
-      },
-      "block_order": ["i1", "i2", "i3", "i4"],
-      "settings": {
-        "color_scheme": "scheme-warm-white"
-      }
-    },
-    "marquee": {
-      "type": "text-marquee",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "text": "Cross the threshold",
-        "font": "serif"
-      }
-    },
-    "quote": {
-      "type": "quote-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white"
-      }
-    },
-    "journal": {
-      "type": "journal-grid",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "columns": "3",
-        "articles_to_show": 3
-      }
-    },
-    "newsletter": {
-      "type": "newsletter-editorial",
-      "settings": {
-        "color_scheme": "scheme-warm-white",
-        "layout": "center"
-      }
-    },
-    "final_cta": {
-      "type": "final-threshold-cta",
+      "block_order": [
+        "release_keyboard",
+        "release_arm_wrist",
+        "release_module",
+        "row_keyboard",
+        "row_materials",
+        "row_principles",
+        "row_system"
+      ],
       "settings": {
         "color_scheme": "scheme-warm-white"
       }
     }
   },
   "order": [
-    "hero",
-    "manifesto",
-    "principles",
-    "featured_collection",
-    "image_text",
-    "story",
-    "featured_product",
-    "craft",
-    "collage",
-    "marquee",
-    "quote",
-    "journal",
-    "newsletter",
-    "final_cta"
+    "limen_anthropic_home"
   ]
 }

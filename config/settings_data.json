@@ -1,6 +1,6 @@
 {
   "current": {
-    "heading_font_family": "instrument",
+    "heading_font_family": "source_serif",
     "heading_scale": 100,
     "heading_italic_emphasis": true,
     "body_font": "ibm_plex_sans_n4",
@@ -131,8 +131,8 @@
     }
   },
   "presets": {
-    "LIMEM": {
-      "heading_font_family": "instrument",
+    "LIMEN": {
+      "heading_font_family": "source_serif",
       "body_font": "ibm_plex_sans_n4",
       "button_style": "solid",
       "border_radius": 2,
