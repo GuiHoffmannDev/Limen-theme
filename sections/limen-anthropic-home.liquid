@@ -4,9 +4,25 @@
 {%- endcomment -%}
 {%- liquid
   assign s = section.settings
+  assign track_order_url = routes.account_login_url
+  if customer
+    assign track_order_url = routes.account_url
+  endif
 -%}
 
 <section class="limen-anthropic color-{{ s.color_scheme }}">
+  <header class="page-width page-width--wide limen-anthropic__topbar" aria-label="Homepage navigation">
+    <a href="{{ routes.root_url }}" class="limen-anthropic__brand" aria-label="{{ shop.name | escape }} home">
+      LIMEN
+    </a>
+
+    <nav class="limen-anthropic__nav" aria-label="Primary">
+      <a href="{{ routes.root_url }}">Home</a>
+      <a href="{{ routes.all_products_collection_url }}">Products</a>
+      <a href="{{ track_order_url }}">Track order</a>
+    </nav>
+  </header>
+
   <div class="page-width page-width--wide limen-anthropic__hero">
     <h1 class="limen-anthropic__hero-title" data-animate="{{ settings.animation_reveal_style }}">
       {{ s.hero_line_1 | escape }}
@@ -113,20 +129,74 @@
     padding-bottom: clamp(5rem, 4rem + 7vw, 11rem);
   }
 
+  .limen-anthropic__topbar {
+    min-height: 4.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(1.25rem, 3vw, 3rem);
+    padding-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--limen-line);
+  }
+
+  .limen-anthropic__brand {
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-indent: 0.24em;
+    line-height: 1;
+  }
+
+  .limen-anthropic__nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: clamp(1rem, 2vw, 2rem);
+    font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .limen-anthropic__nav a {
+    position: relative;
+    padding-block: 0.45rem;
+  }
+
+  .limen-anthropic__nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-base) var(--ease-threshold);
+  }
+
+  .limen-anthropic__nav a:hover::after,
+  .limen-anthropic__nav a:focus-visible::after {
+    transform: scaleX(1);
+  }
+
   .limen-anthropic__hero {
-    min-height: clamp(34rem, 62vh, 46rem);
+    min-height: clamp(30rem, 56vh, 40rem);
     display: grid;
     grid-template-columns: minmax(0, 1.12fr) minmax(21rem, 0.88fr);
     align-items: end;
     gap: clamp(3rem, 6vw, 9rem);
-    padding-top: clamp(8rem, 7vw, 10rem);
-    padding-bottom: clamp(4rem, 6vw, 7rem);
+    padding-top: clamp(4.75rem, 5vw, 7rem);
+    padding-bottom: clamp(3.5rem, 5vw, 6rem);
   }
 
   .limen-anthropic__hero-title {
     max-width: 11.2ch;
     font-family: var(--font-body, "IBM Plex Sans", system-ui, sans-serif);
-    font-size: clamp(3.6rem, 1.35rem + 5.1vw, 6.55rem);
+    font-size: clamp(3.05rem, 1.15rem + 4.3vw, 5.55rem);
     font-weight: 600;
     line-height: 0.94;
     letter-spacing: 0;
@@ -143,7 +213,7 @@
     max-width: 18.5em;
     padding-bottom: clamp(0.5rem, 3vw, 2.5rem);
     font-family: var(--font-display, "Source Serif 4", Georgia, serif);
-    font-size: clamp(1.5rem, 0.82rem + 1.45vw, 2.45rem);
+    font-size: clamp(1.32rem, 0.78rem + 1.15vw, 2.05rem);
     line-height: 1.08;
     letter-spacing: 0;
   }
@@ -374,13 +444,13 @@
       grid-template-columns: 1fr;
       align-items: start;
       gap: 2rem;
-      padding-top: 6rem;
-      padding-bottom: 4rem;
+      padding-top: 4rem;
+      padding-bottom: 3.75rem;
     }
 
     .limen-anthropic__hero-title {
       max-width: 10ch;
-      font-size: clamp(3.15rem, 10.5vw, 5.5rem);
+      font-size: clamp(2.8rem, 9vw, 4.8rem);
     }
 
     .limen-anthropic__hero-copy {
@@ -407,18 +477,34 @@
   }
 
   @media (max-width: 749px) {
+    .limen-anthropic__topbar {
+      min-height: auto;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.9rem;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .limen-anthropic__nav {
+      width: 100%;
+      justify-content: space-between;
+      gap: 0.8rem;
+      font-size: 0.86rem;
+    }
+
     .limen-anthropic__hero {
-      padding-top: 4.5rem;
+      padding-top: 3.2rem;
     }
 
     .limen-anthropic__hero-title {
       max-width: 9.5ch;
-      font-size: clamp(2.65rem, 12vw, 4.2rem);
+      font-size: clamp(2.3rem, 10.5vw, 3.55rem);
       line-height: 0.98;
     }
 
     .limen-anthropic__hero-copy {
-      font-size: clamp(1.3rem, 5vw, 1.9rem);
+      font-size: clamp(1.15rem, 4.4vw, 1.65rem);
     }
 
     .limen-anthropic__feature {
