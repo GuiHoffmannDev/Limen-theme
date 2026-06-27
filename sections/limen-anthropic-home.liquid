@@ -148,6 +148,12 @@
     padding-bottom: clamp(5rem, 4rem + 7vw, 11rem);
   }
 
+  .limen-anthropic > .page-width--wide {
+    width: min(calc(100% - clamp(3rem, 24vw, 32rem)), 1528px);
+    max-width: none;
+    padding-inline: 0;
+  }
+
   .limen-anthropic__topbar {
     min-height: 4.25rem;
     display: flex;
@@ -460,6 +466,10 @@
   }
 
   @media (max-width: 989px) {
+    .limen-anthropic > .page-width--wide {
+      width: calc(100% - 2.5rem);
+    }
+
     .limen-anthropic__hero {
       min-height: auto;
       grid-template-columns: 1fr;
