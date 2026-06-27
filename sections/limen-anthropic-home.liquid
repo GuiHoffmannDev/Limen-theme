@@ -8,18 +8,6 @@
   if customer
     assign track_order_url = routes.account_url
   endif
-  assign hero_underlined_2_words = s.hero_underlined_2 | split: ' '
-  assign hero_underlined_2_first_word = hero_underlined_2_words.first
-  capture hero_underlined_2_rest
-    for word in hero_underlined_2_words
-      unless forloop.first
-        echo word
-        unless forloop.last
-          echo ' '
-        endunless
-      endunless
-    endfor
-  endcapture
 -%}
 
 <section class="limen-anthropic color-{{ s.color_scheme }}">
@@ -41,13 +29,11 @@
         {{ s.hero_line_1 | escape }} <span>{{ s.hero_underlined_1 | escape }}</span>
       </span>
       <span class="limen-anthropic__hero-title-line">
-        {{ s.hero_line_2 | escape }} <span>{{ hero_underlined_2_first_word | escape }}</span>
+        {{ s.hero_line_2 | escape }}
       </span>
-      {%- if hero_underlined_2_rest != blank -%}
-        <span class="limen-anthropic__hero-title-line">
-          {{ hero_underlined_2_rest | strip | escape }}
-        </span>
-      {%- endif -%}
+      <span class="limen-anthropic__hero-title-line">
+        <span>{{ s.hero_underlined_2 | escape }}</span>
+      </span>
     </h1>
 
     <div class="limen-anthropic__hero-copy" data-animate="fade-up" style="--animate-delay: 120ms;">
@@ -228,6 +214,7 @@
 
   .limen-anthropic__hero-title-line {
     display: block;
+    white-space: nowrap;
   }
 
   .limen-anthropic__hero-title-line > span {
@@ -532,6 +519,10 @@
       max-width: 100%;
       font-size: clamp(2.1rem, 9vw, 3.05rem);
       line-height: 0.98;
+    }
+
+    .limen-anthropic__hero-title-line {
+      white-space: normal;
     }
 
     .limen-anthropic__hero-copy {
