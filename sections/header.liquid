@@ -63,7 +63,8 @@
           </a>
         </li>
         <li class="header__menu-item">
-          <a href="{{ track_order_url }}" class="header__menu-link">
+          <a href="{{ track_order_url }}" class="header__menu-link header__menu-link--account">
+            {%- render 'icon', name: 'account', class: 'icon--sm' -%}
             Track order
           </a>
         </li>
@@ -190,7 +191,10 @@
               <a href="{{ routes.all_products_collection_url }}" class="mobile-menu__link"{% if request.page_type == 'collection' %} aria-current="page"{% endif %}>Products</a>
             </li>
             <li class="mobile-menu__item">
-              <a href="{{ track_order_url }}" class="mobile-menu__link">Track order</a>
+              <a href="{{ track_order_url }}" class="mobile-menu__link mobile-menu__link--account">
+                {%- render 'icon', name: 'account', class: 'icon--sm' -%}
+                Track order
+              </a>
             </li>
 
             {%- if menu != blank and menu.links.size > 0 -%}
@@ -356,6 +360,7 @@
   .header__menu-link:hover::after,
   .header__menu-item:focus-within > .header__menu-link::after,
   .header__menu-link[aria-current="page"]::after { transform: scaleX(1); }
+  .header__menu-link--account .icon { margin-top: -0.05em; }
 
   .header__dropdown {
     position: absolute;
@@ -477,6 +482,11 @@
     font-family: var(--font-display, "Instrument Serif", Georgia, serif);
     font-size: var(--text-xl);
     line-height: 1.1;
+  }
+  .mobile-menu__link--account {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
   }
   .mobile-menu__link[aria-current="page"] { color: rgb(var(--color-accent)); }
   .mobile-menu__expand {

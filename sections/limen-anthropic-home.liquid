@@ -19,7 +19,10 @@
     <nav class="limen-anthropic__nav" aria-label="Primary">
       <a href="{{ routes.root_url }}">Home</a>
       <a href="{{ routes.all_products_collection_url }}">Products</a>
-      <a href="{{ track_order_url }}">Track order</a>
+      <a href="{{ track_order_url }}" class="limen-anthropic__nav-account">
+        {%- render 'icon', name: 'account', class: 'icon--sm' -%}
+        Track order
+      </a>
     </nav>
   </header>
 
@@ -173,6 +176,16 @@
   .limen-anthropic__nav a {
     position: relative;
     padding-block: 0.45rem;
+  }
+
+  .limen-anthropic__nav-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .limen-anthropic__nav-account .icon {
+    margin-top: -0.05em;
   }
 
   .limen-anthropic__nav a::after {
